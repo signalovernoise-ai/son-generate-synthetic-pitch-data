@@ -52,18 +52,26 @@ research:
       delivery_policy_summary:
       evidence_source:
   commercial_assumptions:
-    revenue_band:
-    monthly_orders_band:
-    aov_range:
+    annual_revenue_assumption:
+    annual_growth_rates: []
+    monthly_orders_assumption:
+    aov_assumption:
     growth_trend:
     repeat_rate_range:
     refund_rate_range:
   metric_trajectory:
+    annual_revenue_by_year: []
     revenue_by_period: []
     orders_by_period: []
     aov_by_period: []
     repeat_rate_by_period: []
     refund_rate_by_period: []
+    retention_checkpoints:
+      m1:
+      m3:
+      m6:
+      m12:
+    new_vs_repeat_mix_by_period: []
     seasonality_notes: []
     inflection_points:
       - date:

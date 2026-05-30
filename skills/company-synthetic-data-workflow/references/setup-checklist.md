@@ -37,9 +37,10 @@ Capture delivery-threshold logic explicitly because it affects AOV, item count p
 
 ## 3. Commercial modeling assumptions
 
-- Revenue band
-- Monthly order volume band
-- AOV range
+- Assumed annual revenue level
+- Assumed annual revenue growth rates
+- Monthly order volume level
+- AOV level
 - AOV shape, including tail behavior and whether large-order segments exist
 - Gross refund rate
 - Customer growth trend
@@ -58,6 +59,15 @@ Before generation, turn these into an explicit time-series proposal:
 - refund-rate trajectory over time
 - seasonality peaks and troughs by month or campaign window
 - metric inflection points caused by launches, promotions, migrations, or category shifts
+
+Quantify these wherever possible:
+
+- annual revenue assumptions by year or run-rate
+- annual or period-on-period growth rates
+- baseline retention levels such as M1, M3, M6, and M12 where relevant
+- baseline new vs repeat mix
+- baseline refund rate
+- expected uplift or drag from promotions, launches, seasonality, or migration events
 
 ## 4. Source-system inventory
 
@@ -84,7 +94,8 @@ Before any generation work begins, present a plan for user approval that covers:
 - any reduced time windows for large source systems and why they are acceptable
 - current catalog, pricing, and promotion evidence
 - delivery-pricing evidence and free-delivery threshold assumptions
-- proposed growth, seasonality, AOV, retention, refund, and mix trajectories before generation
+- proposed quantified growth, seasonality, AOV, retention, refund, and mix trajectories before generation
+- explicit annual revenue assumptions, annual growth rates, and the expected effect of promos or seasonality on key metrics
 - confirmed systems and supporting evidence
 - source schemas to use
 - raw source outputs to build now
@@ -156,5 +167,5 @@ For each selected issue, define:
 - Check that promotion and discount fields are consistent with the modeled catalog and offer strategy
 - Check that all records fall within the approved historic and future date window
 - Check that any reduced windows for large source systems are actually respected
-- Check that revenue, order volume, AOV, refund rate, and repeat behavior follow the approved pre-generation trajectories
+- Check that revenue, order volume, AOV, refund rate, and repeat behavior follow the approved quantified pre-generation trajectories
 - Record any intentional validation failures that are present because of selected data issues

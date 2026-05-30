@@ -57,13 +57,16 @@ Start from `assets/company_setup_template.yaml`. Fill unknown values with explic
 
 4. Propose the commercial metric shape before generation.
 Before generating any data, define the expected shape of the business over time, including:
-   - growth trend by period
-   - seasonality pattern
+   - assumed annual revenue level and annualized growth rates
+   - monthly revenue path across the approved window
+   - monthly order-volume path across the approved window
+   - seasonality pattern with explicit monthly multipliers or directional lifts/drops
    - AOV level and how it changes over time
-   - new versus repeat mix
-   - refund-rate pattern
-   - retention pattern or repeat-purchase curve
-   - any expected inflection points such as launches, promotions, migrations, or category expansion
+   - new versus repeat mix over time
+   - refund-rate pattern over time
+   - retention pattern or repeat-purchase curve over time
+   - any expected inflection points such as launches, promotions, migrations, or category expansion, with explicit metric impact
+Do not keep these assumptions vague. Quantify them in a way the user can review and challenge before generation starts.
 Record these as explicit pre-generation assumptions in the setup artifact and include them in the approval plan.
 
 5. Confirm source systems with evidence.
@@ -82,7 +85,8 @@ The plan must include:
    - current catalog and pricing evidence
    - promotion and discount assumptions grounded in current site evidence
    - delivery-pricing assumptions, including the free-delivery threshold if one exists
-   - pre-generation metric assumptions and trajectories
+   - quantified pre-generation metric assumptions and trajectories
+   - explicit annual revenue assumptions, annual growth rates, retention levels, AOV levels, refund rates, and the expected effect of promos or seasonality on those metrics
    - confirmed source systems and evidence
    - source schemas to use
    - raw source outputs to build
@@ -136,7 +140,7 @@ Also verify that:
    - primary and foreign keys reconcile across systems
    - downstream timestamps are plausible relative to the products, orders, and customers ground truth
    - historic and future records stay within the approved modeling window
-   - the generated time series follows the approved growth, seasonality, AOV, refund, and retention assumptions closely enough to be believable
+   - the generated time series follows the approved quantified growth, seasonality, AOV, refund, and retention assumptions closely enough to be believable
    - product names, prices, and promotion patterns reflect the observed current site and sensible historical evolution
    - support, lifecycle, and attribution outputs reference real core entities and approved source records
 If the numbers or joins feel too generic or inconsistent, revise before delivering.
