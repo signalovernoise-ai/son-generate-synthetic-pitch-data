@@ -70,6 +70,7 @@ Notes:
 - Some datasets also include explicit refund fields such as `Refunded Amount` and `Refund Status`.
 - Not every Shopify-shaped export contains a real shipping timestamp; `fulfillment_status` is not a substitute for `shipped_at`.
 - Duplicate-looking order names can exist even when the final cleaned `id` is unique.
+- Subscription-originated orders are not best modeled as a universal order-level boolean in standard Shopify exports. In Shopify's APIs, subscription context is exposed through selling-plan data on the line items.
 
 ## Order Items
 
@@ -94,10 +95,14 @@ Use this as the standard raw shape when product-level Shopify data is needed.
 - `taxable`
 - `requires_shipping`
 - `fulfillment_status`
+- `selling_plan_name`
+- `selling_plan_id`
 
 Notes:
 
 - If the source only provides nested line items inside orders, document the flattening logic.
+- For Shopify subscription identification, use line-item selling-plan fields as the primary signal. An order can then be classified as subscription-originated if one or more line items carry selling-plan data.
+- Shopify's subscription architecture also creates subscription contracts, but those should be modeled from the subscription platform source, such as OrderGroove, rather than inferred only from discounted pricing in Shopify orders.
 
 ## Products
 

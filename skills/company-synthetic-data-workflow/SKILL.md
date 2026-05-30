@@ -11,6 +11,7 @@ Keep the workflow anchored to the repo at `/Users/julian/Documents/son-generate-
 
 Do not infer source systems from category norms alone. Only include systems that are confirmed by public evidence, direct user input, or call notes provided by the user.
 Default to a modeling window of 18 months of historic data plus 6 months of future data so pitch datasets remain current for longer. Only change this if the user explicitly requests a different time period during setup or plan review.
+For high-volume source systems such as CRM, support, or event streams, propose a shorter source-specific window when that keeps the dataset practical while preserving the story. Anchor those shorter extracts back to the core products, orders, and users datasets.
 
 ## Outcomes
 
@@ -39,18 +40,33 @@ Browse for current information on:
    - business model and likely order cadence
    - current product names, product prices, bundles, and likely AOV
    - current promotions, discount banners, welcome offers, and subscription incentives
+   - delivery pricing, including any free-delivery threshold or blanket free-shipping policy
    - growth stage, funding, retail footprint, and seasonality clues
+   - press releases, investor updates, company filings, and credible reporting that mention revenue, growth, customer trends, or category expansion
    - source systems, vendors, or job-posting evidence of tooling
    - notable retention or acquisition dynamics in the category
 Use exact dates when referencing current facts.
 Use the exact current product names and prices visible on the company site when building the products table.
 You may add a small number of sensible delisted or historic products, but they should remain adjacent to the current catalog rather than invented from scratch.
 If current promotions or new-customer discounts are visible, use them explicitly when modeling promotions and historical discount behavior unless the user tells you otherwise.
+Capture the free-delivery threshold or delivery-pricing logic explicitly, because it strongly affects AOV and basket behavior.
+Use external revenue, growth, and operating signals from press releases, filings, and similar sources to inform the proposed metric trajectories when direct numbers are available or when directional evidence is strong.
 
 3. Create or refresh a company setup file.
 Start from `assets/company_setup_template.yaml`. Fill unknown values with explicit assumptions and label them as assumptions.
 
-4. Confirm source systems with evidence.
+4. Propose the commercial metric shape before generation.
+Before generating any data, define the expected shape of the business over time, including:
+   - growth trend by period
+   - seasonality pattern
+   - AOV level and how it changes over time
+   - new versus repeat mix
+   - refund-rate pattern
+   - retention pattern or repeat-purchase curve
+   - any expected inflection points such as launches, promotions, migrations, or category expansion
+Record these as explicit pre-generation assumptions in the setup artifact and include them in the approval plan.
+
+5. Confirm source systems with evidence.
 Only include source systems that are backed by one of:
    - public evidence such as vendor directories, job postings, engineering writeups, or exposed trackers
    - direct user confirmation
@@ -58,61 +74,71 @@ Only include source systems that are backed by one of:
 Record the evidence for each system in the setup artifact.
 If a system is plausible but unconfirmed, leave it out of generation and list it as an open question instead.
 
-5. Present an execution plan and wait for approval.
+6. Present an execution plan and wait for approval.
 Before generating or changing any dataset, present the plan back to the user for review, refinement, and explicit approval.
 The plan must include:
    - company brief and modeling scope
    - time window, including whether the default 18 historic months and 6 future months is being used or overridden
    - current catalog and pricing evidence
    - promotion and discount assumptions grounded in current site evidence
+   - delivery-pricing assumptions, including the free-delivery threshold if one exists
+   - pre-generation metric assumptions and trajectories
    - confirmed source systems and evidence
    - source schemas to use
-   - stage outputs and analytics outputs to build
-   - selected data issues and severity
+   - raw source outputs to build
+   - stage outputs and analytics outputs planned for later phases
+   - any proposed source-specific window reductions for large datasets
+   - proposed data-issue mix, including severity, expected prevalence, affected systems, and why each issue belongs in the dataset
    - post-generation validation tests and thresholds
    - generation order and dependencies
    - open questions, constraints, and assumptions
 Do not execute generation until the user approves the plan.
 
-6. Select data issues.
+7. Select data issues.
 Read `references/data-issues-menu.md`, choose only the issues that fit the company and systems, and record:
    - whether the issue is present
    - severity
+   - expected prevalence or approximate volume
    - affected systems
    - whether it should be obvious, subtle, or hidden until standardization
+   - why it is believable for this company
 
-7. Standardize outputs.
+8. Define downstream outputs without generating them yet.
 Read `references/standard-source-schemas/index.md` when selecting platform-specific source tables.
-Read `references/standard-stage-schemas/index.md` when mapping source-shaped data into the stage schemas we control.
-Read `references/standard-analytics-schemas/index.md` when defining derived analytical outputs built from stage data.
+Read `references/standard-stage-schemas/index.md` when planning how source-shaped data will later map into the stage schemas we control.
+Read `references/standard-analytics-schemas/index.md` when planning derived analytical outputs that will later be built from stage data.
+Do not generate stage or analytics outputs until the raw source datasets have been generated, validated, reviewed, and accepted by the user.
 
-8. Generate data in the external workspace using dependency-aware sequencing.
+9. Generate data in the external workspace using dependency-aware sequencing.
 Keep generated CSVs outside the repo. The Python modules in `synthetic_pitch_data` should read and write in the external `synthetic_data/data/...` tree.
 Generate in this order unless the user approves a different dependency model:
-   - first generate orders as the core commercial timeline
+   - first generate products using the observed current catalog as the present-day anchor plus a sensible historic and future tail where needed
+   - then generate orders as the core commercial timeline
    - then generate customers using the orders output as ground truth where needed
-   - then generate products using the observed current catalog as the present-day anchor plus a sensible historic tail where needed
-   - only after orders, customers, and products are stable, parallelize dependent datasets such as GA4, Zendesk, order items, subscription events, or attribution tables
+   - only after products, orders, and customers are stable, parallelize dependent raw source datasets such as GA4, Bloomreach, Zendesk, order items, subscription events, or attribution tables
 All downstream datasets must reconcile to the same primary and foreign keys, event order, and realistic timestamps unless a selected data issue intentionally introduces a controlled mismatch.
 
-9. Run post-generation tests.
-Execute deterministic validation checks after generation and before delivery.
+10. Run raw-source post-generation tests.
+Execute deterministic validation checks after raw source generation and before any standardization or analytics work.
 At minimum, test that:
-   - required primary keys are unique in each controlled table
-   - foreign keys reconcile across orders, customers, products, order items, and downstream event tables
+   - required primary keys are unique in each source dataset where uniqueness is expected
+   - foreign keys reconcile across products, orders, customers, order items, and downstream source event tables
    - timestamps are chronologically plausible within and across systems
    - GA4 purchase events align to the corresponding commerce order within a documented tolerance, defaulting to 30 minutes unless the user approves a different threshold
-   - downstream support, lifecycle, subscription, and attribution records only reference real staged entities
+   - downstream support, lifecycle, subscription, and attribution records only reference real core entities and approved source records
+   - each source dataset respects its approved time window, including any reduced window for large systems
 Record any intentional exceptions that are caused by selected data issues.
+Pause for user review after raw-source validation if stage or analytics outputs have not yet been approved for execution.
 
-10. Validate realism and cross-system consistency.
-Sense-check revenue, retention, refund rates, country mix, AOV, and seasonality against the company and category brief.
+11. Validate realism and cross-system consistency.
+Sense-check revenue, refund rates, country mix, AOV, promotions, and seasonality against the company and category brief.
 Also verify that:
    - primary and foreign keys reconcile across systems
-   - downstream timestamps are plausible relative to the orders and customers ground truth
+   - downstream timestamps are plausible relative to the products, orders, and customers ground truth
    - historic and future records stay within the approved modeling window
+   - the generated time series follows the approved growth, seasonality, AOV, refund, and retention assumptions closely enough to be believable
    - product names, prices, and promotion patterns reflect the observed current site and sensible historical evolution
-   - support, analytics, lifecycle, and attribution outputs reference real staged entities
+   - support, lifecycle, and attribution outputs reference real core entities and approved source records
 If the numbers or joins feel too generic or inconsistent, revise before delivering.
 
 ## Files to read when needed
@@ -139,7 +165,9 @@ python3 -m synthetic_pitch_data.monthly_cohort_retention
 - Keep the company-specific setup artifact as the single source of truth for generation choices.
 - Treat source-system confirmation as evidence-based, not inferential.
 - Always stop for plan review and explicit approval before execution.
+- Treat products, then orders, then customers as the core source-generation spine unless the user approves a different dependency model.
 - Parallelize only after shared ground-truth entities are generated and locked.
+- Keep source generation, stage standardization, and analytics generation as separate approval phases.
 - Treat the current site catalog and visible promotions as first-class evidence for product and discount modeling.
 - Run explicit post-generation tests before considering the dataset complete.
 - Do not write generated CSV outputs into the repo.

@@ -11,6 +11,8 @@ Use this as a menu, not a checklist. Choose the smallest believable set that mak
 - Missing user IDs on historic orders
 - User ID format drift after migrations or legacy-system merges
 - Duplicate-looking display IDs even when the underlying row ID is unique
+- Orphaned orders or events whose user ID no longer resolves to a customer record
+- Valid prospects or leads present in customer tables with no orders yet
 
 ## Orders and revenue
 
@@ -23,6 +25,11 @@ Use this as a menu, not a checklist. Choose the smallest believable set that mak
 - Implausible values such as 0.01 test orders or very large outlier totals
 - Pending or failed orders mixed into transactional extracts
 - Subscription discount logic changing AOV or retention after a product launch
+- Test orders created through 100% discount codes, zero-total checkouts, or negative-value rows
+- Timestamp reversals such as `processed_at` before `created_at`
+- Explicit staging-channel orders mixed into production-looking transactional extracts
+- Rapid order bursts within seconds that suggest load tests or duplicated ingestion
+- Duplicate heuristics that are platform-specific, for example same email and total within minutes or same user and total within seconds
 
 ## Marketing and attribution
 
@@ -57,6 +64,8 @@ Use this as a menu, not a checklist. Choose the smallest believable set that mak
 - Support tickets not consistently linked to orders or customers
 - Return reasons free-text only
 - Staging contamination from explicit channels, internal sources, or test email patterns
+- Free-delivery threshold effects causing order values to bunch just above the shipping floor
+- Delivery-policy changes that alter AOV and item-count behavior over time
 
 ## Warehouse and schema quality
 
@@ -67,6 +76,8 @@ Use this as a menu, not a checklist. Choose the smallest believable set that mak
 - Sparse backfills for one source
 - Late-arriving data changing recent periods
 - A field being present for one platform export but absent in another export of the same platform
+- Missing fields that can only be recovered from another source or a documented fallback rule
+- Source exports that expose status-based refund signals but not refund amounts
 
 ## Severity scale
 

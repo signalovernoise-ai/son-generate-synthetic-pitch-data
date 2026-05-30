@@ -13,6 +13,17 @@ company:
   business_model:
   confidence_note:
 
+source_time_windows:
+  default:
+    historic_months: 18
+    future_months: 6
+  overrides:
+    - system_name:
+      historic_months:
+      future_months:
+      rationale:
+      anchor_to_tables: []
+
 research:
   sources: []
   summary:
@@ -36,6 +47,10 @@ research:
         offer_type:
         details:
         evidence_source:
+    delivery_pricing:
+      free_delivery_threshold:
+      delivery_policy_summary:
+      evidence_source:
   commercial_assumptions:
     revenue_band:
     monthly_orders_band:
@@ -43,6 +58,18 @@ research:
     growth_trend:
     repeat_rate_range:
     refund_rate_range:
+  metric_trajectory:
+    revenue_by_period: []
+    orders_by_period: []
+    aov_by_period: []
+    repeat_rate_by_period: []
+    refund_rate_by_period: []
+    seasonality_notes: []
+    inflection_points:
+      - date:
+        metric:
+        expected_change:
+        rationale:
   seasonality:
     peak_periods: []
     low_periods: []
@@ -75,33 +102,37 @@ data_issues:
   selected:
     - issue:
       severity:
+      expected_prevalence:
       affected_systems: []
       visibility:
+      rationale:
       notes:
 
 execution_plan:
   approval_status: draft
+  current_phase: source_generation
   scope_summary:
   approved_time_window:
     historic_months: 18
     future_months: 6
     override_reason:
   catalog_and_promotion_summary:
+  metric_assumptions_summary:
   generation_sequence:
-    - step: generate_orders
+    - step: generate_products
       depends_on: []
+    - step: generate_orders
+      depends_on:
+        - generate_products
     - step: generate_customers
       depends_on:
         - generate_orders
-    - step: generate_products
-      depends_on:
-        - generate_orders
-        - generate_customers
+        - generate_products
     - step: generate_dependent_datasets
       depends_on:
+        - generate_products
         - generate_orders
         - generate_customers
-        - generate_products
   parallel_groups:
     - name:
       members: []
@@ -109,6 +140,13 @@ execution_plan:
         - generate_orders
         - generate_customers
         - generate_products
+  phase_gates:
+    - phase: source_generation
+      approval_required_before_next: true
+    - phase: stage_standardization
+      approval_required_before_next: true
+    - phase: analytics_generation
+      approval_required_before_next: false
   consistency_checks:
     - foreign_key_reconciliation
     - timestamp_plausibility
@@ -124,7 +162,11 @@ execution_plan:
       threshold:
         historic_months: 18
         future_months: 6
+    - name: source_specific_window_bounds
+      threshold:
     - name: promotion_and_discount_consistency
+      threshold:
+    - name: metric_trajectory_alignment
       threshold:
   open_questions: []
 
