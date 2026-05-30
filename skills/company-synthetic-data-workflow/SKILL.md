@@ -179,12 +179,36 @@ Also verify that:
    - support, lifecycle, and attribution outputs reference real core entities and approved source records
 If the numbers or joins feel too generic or inconsistent, revise before delivering.
 
+13. Stage and clean — only after the source phase passes.
+This is a gated phase. Do not begin staging until raw generation is complete AND `validate_raw` exits 0 (every check PASS, or a FAIL explicitly recorded under `execution_plan.accepted_waivers`), AND the user has approved moving past the `source_generation` gate. If validation still has un-waived FAILs, fix and regenerate first.
+Read `references/stage-cleaning.md` before staging. Then run:
+
+```bash
+python3 -m synthetic_pitch_data.staging.run_staging --company <slug>
+```
+
+This cleans every produced extract through the shared detector battery and writes cleaned stage tables plus an auto-generated `CLEANING_NOTES.md` under `data/stage/<slug>/`. Key rules:
+   - Discover issues from the data by profiling — never from the generators. The staging package is isolated and must not import generator code.
+   - Standardize the commerce spine (customers, orders, order_items, products) to the Shopify shape; conform a non-Shopify backend with an adapter first. Clean non-commerce systems (GA4, CRM, support, subscriptions, attribution) within their own standard source schemas.
+   - Per-dataset cleaners are reused across all clients on a system, never written per client. A new system needs one dataset spec (or adapter); a new quirk needs one new detector in the shared battery — then refine over time.
+   - Review `CLEANING_NOTES.md` and confirm the detected issues are plausible before moving on. Pause for user approval of the `stage_standardization` gate.
+
+14. Generate analytics from the staged tables.
+Only after staging is reviewed and approved. Analytics read the cleaned stage tables directly (e.g. retention reads `shopify_orders.csv`). Build the approved analytics outputs, for example:
+
+```bash
+RETENTION_AS_OF_DATE=<as_of> python3 -m synthetic_pitch_data.monthly_cohort_retention --company <slug>
+```
+
+Retention is computed as of a date and ignores future-dated orders. Validate analytics against the documented trajectory (retention checkpoints, etc.) before delivering.
+
 ## Files to read when needed
 
 - `references/setup-checklist.md`: step-by-step setup and research checklist
 - `references/metric-definitions.md`: how every metric is computed (AOV/revenue conventions, promo-inclusive volume, scaling)
 - `references/channel-mix-benchmarks.md`: realistic D2C channel mix, unattributed baseline, and attribution-coverage modelling
 - `references/data-issues-menu.md`: menu of common real-world data issues
+- `references/stage-cleaning.md`: how raw extracts are cleaned/standardized into stage tables, the detector battery, and how to extend it
 - `references/standard-source-schemas/index.md`: platform-specific source extract schemas
 - `references/standard-stage-schemas/index.md`: canonical stage schemas and mapping guidance
 - `references/standard-analytics-schemas/index.md`: canonical analytics schemas derived from stage data
@@ -195,8 +219,8 @@ Use these commands from the repo root when useful:
 
 ```bash
 python3 -m synthetic_pitch_data.validate_raw --company <slug>
-python3 -m synthetic_pitch_data.run_all
-python3 -m synthetic_pitch_data.monthly_cohort_retention
+python3 -m synthetic_pitch_data.staging.run_staging --company <slug>
+python3 -m synthetic_pitch_data.monthly_cohort_retention --company <slug>
 ```
 
 ## Working style
@@ -208,7 +232,8 @@ python3 -m synthetic_pitch_data.monthly_cohort_retention
 - Always stop for plan review and explicit approval before execution.
 - Treat products, then orders, then customers as the core source-generation spine unless the user approves a different dependency model.
 - Parallelize only after shared ground-truth entities are generated and locked.
-- Keep source generation, stage standardization, and analytics generation as separate approval phases.
+- Keep source generation, stage standardization, and analytics generation as separate approval phases. Do not start staging until `validate_raw` passes (or has recorded waivers) and the source phase is approved.
+- When cleaning/staging, discover issues by profiling the data, never by consulting the generators. Keep the staging package isolated from generator code.
 - Treat the current site catalog and visible promotions as first-class evidence for product and discount modeling.
 - Run explicit post-generation tests before considering the dataset complete.
 - Do not write generated CSV outputs into the repo.

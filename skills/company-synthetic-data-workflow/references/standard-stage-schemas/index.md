@@ -2,9 +2,27 @@
 
 Use this folder for the stage schemas that we define and control after cleaning and standardization.
 
-These schemas are canonical. Source-specific extracts should map into these shapes in a documented and repeatable way.
+## Current canonical stage model
 
-Read the file for the relevant stage output:
+The stage layer is produced by the `synthetic_pitch_data/staging` package (see
+`../stage-cleaning.md` for the methodology and detector battery). For each company it
+writes one cleaned table per produced extract under `data/stage/<slug>/`, where:
+
+- the **commerce spine** (`shopify_customers`, `shopify_orders`, `shopify_order_items`,
+  `shopify_products`) is standardized to the **Shopify shape** — a non-Shopify backend is
+  conformed by an adapter first. Cleaning derives `net_sale_price` (refund-netted) on
+  orders and `is_subscription` (selling-plan presence) on order items.
+- **non-commerce systems** (GA4, Bloomreach, Zendesk, OrderGroove, Triple Whale) are
+  cleaned within their own standard source schemas (see `../standard-source-schemas/`).
+
+Analytics read these cleaned stage tables directly (e.g. retention reads
+`shopify_orders.csv`). The `core-users` / `core-orders` fields below remain the canonical
+*logical* commerce fields and their mapping from the Shopify shape:
+
+- `user_id` ← `shopify_customers.id` / `shopify_orders.customer_id`
+- `order_id` ← `shopify_orders.id`; `ordered_at` ← `created_at`; `net_sale_price` derived
+
+Read the file for the relevant logical mapping:
 
 - `core-users.md`
 - `core-orders.md`

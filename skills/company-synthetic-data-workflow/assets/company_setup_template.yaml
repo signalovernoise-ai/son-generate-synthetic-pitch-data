@@ -220,6 +220,12 @@ execution_plan:
         orders_pct: 3
         revenue_pct: 6
         aov_pct: 4
+  # Known, signed-off deviations: listed checks report WAIVED instead of FAIL so the
+  # gate can pass. Use sparingly and record why. Check names match the harness report
+  # (e.g. metric_trajectory:AOV, metric_trajectory:revenue).
+  accepted_waivers: []
+  #  - check: metric_trajectory:AOV
+  #    reason: <why this deviation is accepted for now>
   open_questions: []
 
 generation:

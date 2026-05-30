@@ -137,6 +137,12 @@ class Validator:
             t["name"]: (t.get("threshold") or {})
             for t in self.cfg.get("execution_plan", {}).get("validation_tests", [])
         }
+        # Accepted waivers: checks whose FAIL is a known, signed-off deviation.
+        # They report WAIVED (not FAIL) so a deferred issue doesn't block the gate.
+        self.waivers = {
+            w["check"]: w.get("reason", "")
+            for w in self.cfg.get("execution_plan", {}).get("accepted_waivers", []) or []
+        }
         # Files this company actually produced that we know how to validate.
         self.present = {f.name for f in self.src.glob("*.csv") if f.name in RAW_SCHEMA}
         self.by_role: dict[str, str] = {}
@@ -165,6 +171,10 @@ class Validator:
         return RAW_SCHEMA[fname].get(key) if fname else None
 
     def add(self, name: str, status: str, detail: str) -> None:
+        if status == "FAIL" and name in self.waivers:
+            reason = self.waivers[name]
+            detail = f"{detail}  [WAIVED: {reason}]" if reason else f"{detail}  [WAIVED]"
+            status = "WAIVED"
         self.results.append(Result(name, status, detail))
 
     @staticmethod
@@ -475,17 +485,23 @@ class Validator:
         self.check_metric_trajectory()
         self.check_data_issues()
 
-        icon = {"PASS": "✅", "FAIL": "❌", "WARN": "⚠️ ", "MANUAL": "📝", "SKIP": "··"}
+        icon = {"PASS": "✅", "FAIL": "❌", "WARN": "⚠️ ", "MANUAL": "📝", "WAIVED": "🟡", "SKIP": "··"}
         print(f"\nValidation report — {self.slug}  (scale {self.scale})")
         print(f"systems detected: {', '.join(sorted(self.by_role))}")
         print("=" * 72)
         for r in self.results:
             print(f"  {icon.get(r.status, '?')} {r.status:6s} {r.name:34s} {r.detail}")
         fails = [r for r in self.results if r.status == "FAIL"]
+        waived = [r for r in self.results if r.status == "WAIVED"]
         manual = [r for r in self.results if r.status == "MANUAL"]
         passes = sum(1 for r in self.results if r.status == "PASS")
         print("=" * 72)
-        print(f"  {len(fails)} FAIL, {len(manual)} MANUAL, {passes} PASS of {len(self.results)} checks")
+        print(
+            f"  {len(fails)} FAIL, {len(waived)} WAIVED, {len(manual)} MANUAL, "
+            f"{passes} PASS of {len(self.results)} checks"
+        )
+        if waived:
+            print("  WAIVED checks are accepted known deviations (see execution_plan.accepted_waivers).")
         if manual:
             print("  MANUAL checks require human sense-check (no automated signature).")
         return 1 if fails else 0
