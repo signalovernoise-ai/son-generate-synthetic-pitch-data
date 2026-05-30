@@ -70,6 +70,7 @@ Before generating any data, define the expected shape of the business over time,
    - any expected inflection points such as launches, promotions, migrations, or category expansion, with explicit metric impact
 Do not keep these assumptions vague. Quantify them in a way the user can review and challenge before generation starts.
 Record these as explicit pre-generation assumptions in the setup artifact and include them in the approval plan.
+Read `references/metric-definitions.md` and follow it for how every metric is computed. In particular: AOV and revenue are net of discount, VAT-inclusive, and shipping-excluded; calibrate order size against the net price the customer pays, never the gross list/`compare_at_price` value. Monthly order-volume targets are promo-inclusive — promotions lean into key trading periods, so they are already baked into the monthly path; model promo effects on AOV and mix, not as an additional volume lift on top of the monthly target. If a company instead wants pre-promo baselines, state that override in the setup artifact.
 
 5. Estimate dataset volume before generation.
 Estimate the likely row counts for the raw source outputs, especially:
@@ -125,6 +126,8 @@ Read `references/data-issues-menu.md`, choose only the issues that fit the compa
    - affected systems
    - whether it should be obvious, subtle, or hidden until standardization
    - why it is believable for this company
+Give every selected issue a measurable definition of done so it can be verified, not just asserted. Where a registered validation check exists (see step 11), record its `check` name and an `expected_prevalence_range` in the setup artifact; for issues with no automated check, write a concrete signature an analyst could confirm by hand.
+Model data issues as the real defect, not a cosmetic label. For example, "partial attribution coverage" means orders genuinely missing from the attribution source (fewer rows), not just a channel value set to unattributed. When modelling acquisition channels and attribution, read `references/channel-mix-benchmarks.md` so the channel mix is realistically non-uniform and the unattributed baseline is not accidentally doubled by stacked code paths.
 
 9. Define downstream outputs without generating them yet.
 Read `references/standard-source-schemas/index.md` when selecting platform-specific source tables.
@@ -142,15 +145,26 @@ Generate in this order unless the user approves a different dependency model:
 All downstream datasets must reconcile to the same primary and foreign keys, event order, and realistic timestamps unless a selected data issue intentionally introduces a controlled mismatch.
 
 11. Run raw-source post-generation tests.
-Execute deterministic validation checks after raw source generation and before any standardization or analytics work.
-At minimum, test that:
-   - required primary keys are unique in each source dataset where uniqueness is expected
-   - foreign keys reconcile across products, orders, customers, order items, and downstream source event tables
-   - timestamps are chronologically plausible within and across systems
-   - GA4 purchase events align to the corresponding commerce order within a documented tolerance, defaulting to 30 minutes unless the user approves a different threshold
-   - downstream support, lifecycle, subscription, and attribution records only reference real core entities and approved source records
-   - each source dataset respects its approved time window, including any reduced window for large systems
-Record any intentional exceptions that are caused by selected data issues.
+Run the deterministic validation harness after raw source generation and before any standardization or analytics work. It is a closed loop: it reads the setup yaml thresholds and data-issue checks and reports PASS / FAIL / MANUAL per check, exiting non-zero on any FAIL.
+
+```bash
+python3 -m synthetic_pitch_data.validate_raw --company <slug>
+```
+
+Treat a non-zero exit as blocking: fix the generator or the targets and regenerate until it passes, rather than rationalizing a FAIL. The harness covers:
+   - primary-key uniqueness where uniqueness is expected
+   - foreign-key reconciliation across products, orders, customers, order items, and downstream event tables
+   - modeling-window and source-specific-window bounds (including reduced windows for large systems)
+   - GA4 purchase-event alignment to the commerce order within the documented tolerance (default 30 minutes)
+   - metric-trajectory alignment: realized orders, revenue, and AOV versus the documented targets (scaled where operational scaling applies) within the yaml tolerances
+   - each selected data issue that declares a registered `check`, against its `expected_prevalence_range`
+For the empty-threshold case the harness reports SKIP, not a pass — fill in thresholds so checks actually run. Checks reported MANUAL have no automated signature and must be sense-checked by hand. Record any intentional exceptions caused by selected data issues.
+
+The harness is generic across companies, not per-company. It works off a schema registry (`RAW_SCHEMA` in `synthetic_pitch_data/validate_raw.py`) keyed by canonical source filename and tagged with a logical role, and it validates only the subset of systems a company actually generated. So:
+   - A new company that reuses already-known source systems needs no code change — just fill its setup yaml thresholds and data-issue checks.
+   - A brand-new source system type needs one `RAW_SCHEMA` entry (filename, role, primary key, foreign keys, and any column hints), which every future company using that system then reuses. Keep it consistent with the matching `references/standard-source-schemas/` doc.
+   - A new data-issue check is registered once in `validate_raw.py` and referenced from the setup yaml by name.
+   Do not write a separate validation file per company.
 Pause for user review after raw-source validation if stage or analytics outputs have not yet been approved for execution.
 
 12. Validate realism and cross-system consistency.
@@ -168,6 +182,8 @@ If the numbers or joins feel too generic or inconsistent, revise before deliveri
 ## Files to read when needed
 
 - `references/setup-checklist.md`: step-by-step setup and research checklist
+- `references/metric-definitions.md`: how every metric is computed (AOV/revenue conventions, promo-inclusive volume, scaling)
+- `references/channel-mix-benchmarks.md`: realistic D2C channel mix, unattributed baseline, and attribution-coverage modelling
 - `references/data-issues-menu.md`: menu of common real-world data issues
 - `references/standard-source-schemas/index.md`: platform-specific source extract schemas
 - `references/standard-stage-schemas/index.md`: canonical stage schemas and mapping guidance
@@ -178,6 +194,7 @@ If the numbers or joins feel too generic or inconsistent, revise before deliveri
 Use these commands from the repo root when useful:
 
 ```bash
+python3 -m synthetic_pitch_data.validate_raw --company <slug>
 python3 -m synthetic_pitch_data.run_all
 python3 -m synthetic_pitch_data.monthly_cohort_retention
 ```

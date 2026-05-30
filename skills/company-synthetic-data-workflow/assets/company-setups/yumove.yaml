@@ -445,6 +445,8 @@ data_issues:
     - issue: Email casing or whitespace drift
       severity: low
       expected_prevalence: 1-3% of Shopify and Bloomreach customer/contact records
+      check: email_casing_or_whitespace_drift
+      expected_prevalence_range: [0.01, 0.03]
       affected_systems:
         - Shopify
         - Bloomreach
@@ -464,21 +466,24 @@ data_issues:
     - issue: Partial attribution coverage
       severity: medium
       expected_prevalence: 5-12% of attributed order joins
+      check: partial_attribution_coverage
+      expected_prevalence_range: [0.05, 0.12]
       affected_systems:
         - GA4
         - Triple Whale
       visibility: subtle
       rationale: Fits the recent Triple Whale implementation and general attribution incompleteness.
-      notes: Some orders should be present in commerce but unattributed or only partially attributed downstream.
+      notes: Model as genuinely missing Triple Whale rows (orders present in commerce but absent downstream), not merely a channel value. See references/channel-mix-benchmarks.md.
     - issue: Channel tracking breakage with unattributed spike
       severity: medium
       expected_prevalence: 3 short windows across the 18-month operational horizon
+      check: channel_tracking_break
       affected_systems:
         - GA4
         - Triple Whale
       visibility: obvious
       rationale: User explicitly requested channel tracking to break at a few points in the series.
-      notes: Model short periods where unattributed share spikes materially above baseline.
+      notes: Baseline unattributed ~7-10%; spike to ~19-25% in short windows. Do not stack multiple unattributed code paths. See references/channel-mix-benchmarks.md.
     - issue: Recent-system-window truncation
       severity: medium
       expected_prevalence: Systemic by design for Bloomreach and Triple Whale
@@ -511,12 +516,14 @@ data_issues:
     - issue: Duplicate-looking operational rows
       severity: low
       expected_prevalence: Less than 0.5% of selected operational datasets
+      check: near_duplicate_orders
+      expected_prevalence_range: [0.0005, 0.005]
       affected_systems:
         - Shopify
         - Zendesk
       visibility: subtle
       rationale: Light operational mess improves realism without making the sources look broken.
-      notes: Keep this sparse and platform-appropriate.
+      notes: Keep this sparse and platform-appropriate (e.g. duplicate-looking order names while the underlying id stays unique).
 
 execution_plan:
   approval_status: approved
@@ -571,22 +578,33 @@ execution_plan:
   validation_tests:
     - name: primary_key_uniqueness
       threshold:
+        max_duplicates: 0
     - name: foreign_key_reconciliation
       threshold:
+        max_orphans: 0
     - name: ga4_order_timestamp_alignment
       threshold: 30_minutes
     - name: modeling_window_bounds
       threshold:
         historic_months: 12
         future_months: 6
+        window_start: 2025-06-01
+        window_end: 2026-11-30
     - name: source_specific_window_bounds
       threshold:
         bloomreach_historic_months: 3
         triple_whale_historic_months: 9
+        earliest_by_file:
+          bloomreach_campaign_events.csv: 2026-03-01
+          triple_whale_attributed_orders.csv: 2025-09-01
     - name: promotion_and_discount_consistency
       threshold:
+        note: Monthly volume targets are promo-inclusive; validate promo effects on AOV/mix, not on monthly volume. See references/metric-definitions.md.
     - name: metric_trajectory_alignment
       threshold:
+        orders_pct: 3
+        revenue_pct: 6
+        aov_pct: 4
     - name: operational_row_volume_scaling
       threshold:
         scaling_factor: 0.15

@@ -28,6 +28,20 @@ If you need reproducible retention outputs, pin the as-of date:
 RETENTION_AS_OF_DATE=2026-05-30 python3 -m synthetic_pitch_data.run_all
 ```
 
+## Validating generated data
+
+After generating a company's raw source data, run the deterministic validation harness. It
+reads the company setup yaml (thresholds + data-issue checks) and reports PASS / FAIL / MANUAL
+per check, exiting non-zero on any FAIL so it can gate the workflow:
+
+```bash
+python3 -m synthetic_pitch_data.validate_raw --company yumove
+```
+
+Metric formulas and conventions (AOV net-of-discount, VAT-inclusive, shipping-excluded;
+promo-inclusive monthly volume) are defined in
+[`references/metric-definitions.md`](skills/company-synthetic-data-workflow/references/metric-definitions.md).
+
 ## Skill scaffold
 
 The first pass of the reusable Codex workflow lives in [`skills/company-synthetic-data-workflow`](./skills/company-synthetic-data-workflow). It is designed to:

@@ -98,6 +98,10 @@ CHANNELS = [
     ("Affiliate", "impact", "affiliate", "Affiliate"),
 ]
 
+# Acquisition-channel mix for a paid-heavy D2C brand. Aligned to CHANNELS order
+# so paid social/search dominate rather than the unrealistic uniform split.
+CHANNEL_WEIGHTS = [0.30, 0.24, 0.10, 0.15, 0.12, 0.09]
+
 BROWSERS = ["Chrome", "Safari", "Firefox", "Edge"]
 DEVICES = ["mobile", "desktop", "tablet"]
 MONTH_KEYS = [str(month) for month in pd.period_range(SOURCE_WINDOW_START, SOURCE_WINDOW_END, freq="M")]
@@ -321,7 +325,7 @@ def create_customer_profile(
     last_name = LAST_NAMES[int(rng.integers(0, len(LAST_NAMES)))]
     city, province, province_code, region = CITIES[int(rng.integers(0, len(CITIES)))]
     email = make_email(first_name, last_name, serial, rng)
-    acquisition = CHANNELS[int(rng.integers(0, len(CHANNELS)))]
+    acquisition = CHANNELS[int(rng.choice(len(CHANNELS), p=CHANNEL_WEIGHTS))]
     segment = rng.choice(["one_time", "repeat", "loyal"], p=[0.46, 0.36, 0.18])
     primary_category = rng.choice(["joint", "digestive"], p=[0.67, 0.33])
     accepts_marketing = rng.choice(["true", "false", "blank"], p=[0.56, 0.36, 0.08])
@@ -821,7 +825,7 @@ def assign_attribution(
             "(direct)",
             "(none)",
         )
-    if rng.random() < 0.07:
+    if rng.random() < 0.015:
         return (
             "Unassigned",
             "Unassigned",
@@ -1063,6 +1067,10 @@ def build_triple_whale(orders: pd.DataFrame, profiles: pd.DataFrame) -> tuple[pd
     for idx, order in enumerate(recent_orders.itertuples(index=False), start=1):
         profile = profile_map[str(order.customer_id)]
         order_ts = pd.Timestamp(order.created_at)
+        # Partial attribution coverage: ~8% of orders exist in commerce but were
+        # never captured by Triple Whale, leaving a genuine join gap downstream.
+        if rng.random() < 0.08:
+            continue
         base_channel, _, source, medium, _, _, _, _ = assign_attribution(
             rng,
             str(profile["source"]),
@@ -1071,7 +1079,7 @@ def build_triple_whale(orders: pd.DataFrame, profiles: pd.DataFrame) -> tuple[pd
             order_ts,
         )
         coverage = rng.random()
-        if coverage < 0.08:
+        if coverage < 0.06:
             channel = "unattributed"
             source_name = "(not set)"
             utm_source = "(not set)"

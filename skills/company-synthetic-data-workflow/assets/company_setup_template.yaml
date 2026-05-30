@@ -125,10 +125,17 @@ standardization:
   mapping_notes: []
 
 data_issues:
+  # For each selected issue declare a measurable "definition of done": a `check`
+  # the validation harness can run plus an `expected_prevalence_range` [lo, hi]
+  # (fractions). Registered checks: email_casing_or_whitespace_drift,
+  # partial_attribution_coverage, channel_tracking_break, near_duplicate_orders.
+  # Issues with no registered check are reported MANUAL for human sense-check.
   selected:
     - issue:
       severity:
       expected_prevalence:
+      check:
+      expected_prevalence_range: []
       affected_systems: []
       visibility:
       rationale:
@@ -178,23 +185,41 @@ execution_plan:
     - foreign_key_reconciliation
     - timestamp_plausibility
     - cross_system_entity_coverage
+  # Thresholds below are the machine-readable contract consumed by
+  # `python3 -m synthetic_pitch_data.validate_raw --company <slug>`. Fill them in;
+  # empty thresholds become SKIP, not silent passes.
   validation_tests:
     - name: primary_key_uniqueness
       threshold:
+        max_duplicates: 0
     - name: foreign_key_reconciliation
       threshold:
+        max_orphans: 0
     - name: ga4_order_timestamp_alignment
       threshold: 30_minutes
     - name: modeling_window_bounds
       threshold:
         historic_months: 18
         future_months: 6
+        window_start:        # YYYY-MM-DD, e.g. 2025-06-01
+        window_end:          # YYYY-MM-DD
     - name: source_specific_window_bounds
+      # earliest allowed date per shorter-window source file (canonical filenames)
       threshold:
+        earliest_by_file: {}
+        # e.g.
+        #   bloomreach_campaign_events.csv: 2026-03-01
+        #   triple_whale_attributed_orders.csv: 2025-09-01
     - name: promotion_and_discount_consistency
       threshold:
+        note: Monthly volume targets are promo-inclusive; validate promo effects on AOV/mix, not volume. See references/metric-definitions.md.
     - name: metric_trajectory_alignment
+      # tolerances as percent deviation of realized vs target (target x scale for
+      # volume/revenue; AOV is scale-invariant). Compared against metric_trajectory.
       threshold:
+        orders_pct: 3
+        revenue_pct: 6
+        aov_pct: 4
   open_questions: []
 
 generation:
