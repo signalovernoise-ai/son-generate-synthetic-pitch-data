@@ -1,0 +1,616 @@
+company:
+  name: YuMOVE
+  website: https://yumove.co.uk/
+  generated_on: 2026-05-30
+  time_window:
+    historic_months: 12
+    future_months: 6
+    override_reason: Reduce the default 18-month history to 12 months because the projected raw-source build would otherwise exceed the workflow volume threshold.
+  primary_market: GB
+  currency: GBP
+  category: Pet supplements
+  subcategory: Joint support and digestive health
+  business_model: Mixed one-off and subscription D2C
+  confidence_note: Company context, priorities, and systems are grounded in the provided email thread plus current public website and corporate sources.
+
+source_time_windows:
+  default:
+    historic_months: 12
+    future_months: 6
+  overrides:
+    - system_name: Bloomreach
+      historic_months: 3
+      future_months: 6
+      rationale: Lifecycle data is intentionally shortened to limit row counts and reflect a recent-system view.
+      anchor_to_tables:
+        - users
+        - orders
+    - system_name: Triple Whale
+      historic_months: 9
+      future_months: 6
+      rationale: User-approved assumption that Triple Whale was only implemented 9 months ago.
+      anchor_to_tables:
+        - orders
+        - order_items
+
+volume_plan:
+  estimated_raw_rows:
+    products: 42
+    orders: 145000
+    customers: 100000
+    order_items: 350000
+    crm_events: 180000
+    attribution_events: 300000
+    support_tickets: 16000
+    total: 1700000
+  threshold_total_raw_rows: 5000000
+  protected_dimensions:
+    - products
+  reduction_actions:
+    reduce_historic_window_to_months: 12
+    row_volume_scaling_factor: 0.15
+    rationale: Preserve the approved business metrics, growth, retention, promo effects, and issue prevalence while keeping raw-source generation and validation manageable. Low-row-count dimensions such as products should remain complete and not be reduced by this scaling rule.
+
+research:
+  sources:
+    - https://yumove.co.uk/
+    - https://yumove.co.uk/pages/about
+    - https://yumove.co.uk/pages/yumove-subscription
+    - https://yumove.co.uk/pages/terms-conditions
+    - https://yumove.co.uk/pages/subscription-terms-conditions
+    - https://yumove.co.uk/pages/delivery-and-returns
+    - https://yumove.co.uk/products/yumove-daily-bites-adult-dogs
+    - https://find-and-update.company-information.service.gov.uk/company/05928692/filing-history
+    - https://www.bdo.co.uk/en-gb/deals/inflexion-has-sold-its-investment-in-lintbells-to-vetnique-labs
+    - https://www.gryphon-inv.com/news/gryphon-investors-backed-vetnique-labs-to-acquire-u-k-maker-of-yumove/
+    - https://www.192.com/atoz/financial/business/05928692/
+    - "/Users/julian/Downloads/Jenny + Tushar + Johannes.eml"
+  summary: YuMOVE is a UK D2C pet-supplement brand under Lintbells/Vetnique, focused on joint support with an active digestive expansion play. The site shows strong subscription merchandising and live promotional activity. Public corporate sources support a growth narrative through D2C expansion and the July 2024 Vetnique acquisition of Lintbells.
+  product_catalog:
+    hero_products:
+      - Joint Care PLUS for Dogs
+      - Joint Care PLUS Max Strength for Dogs
+      - Digestive Support Pre, Pro & Postbiotic Bites
+      - Digestive Care Anal Gland Health Bites
+      - Digestive Care Prebiotic & Probiotic Tablets
+    current_products:
+      - name: Digestive Support Pre, Pro & Postbiotic Bites
+        current_price: 8.75
+        currency: GBP
+        product_url: https://yumove.co.uk/
+        evidence_notes: Homepage showed a struck-through price of 17.50 and a visible current price of 8.75 on 2026-05-30.
+      - name: Joint Care PLUS for Dogs
+        current_price: 9.65
+        currency: GBP
+        product_url: https://yumove.co.uk/
+        evidence_notes: Homepage showed a struck-through price of 19.29 and a visible current price of 9.65 on 2026-05-30.
+      - name: Joint Care PLUS Max Strength for Dogs
+        current_price: 12.15
+        currency: GBP
+        product_url: https://yumove.co.uk/
+        evidence_notes: Homepage showed a struck-through price of 24.29 and a visible current price of 12.15 on 2026-05-30.
+      - name: Digestive Care Anal Gland Health Bites
+        current_price: 11.00
+        currency: GBP
+        product_url: https://yumove.co.uk/
+        evidence_notes: Homepage showed a struck-through price of 22.00 and a visible current price of 11.00 on 2026-05-30.
+      - name: Digestive Care Prebiotic & Probiotic Tablets
+        current_price: 8.00
+        currency: GBP
+        product_url: https://yumove.co.uk/
+        evidence_notes: Homepage showed a struck-through price of 16.00 and a visible current price of 8.00 on 2026-05-30.
+    historic_or_delisted_products:
+      - name: YuMOVE Daily Bites Adult Dogs
+        inferred_price: 15.00
+        rationale: The product page exists publicly and can be used as a sensible adjacent catalog item even if homepage visibility changes.
+      - name: YuMOVE Digestive Care Bundle
+        inferred_price: 32.00
+        rationale: A plausible retired or intermittent bundle grounded in the current digestive assortment and promo-led merchandising style.
+      - name: YuMOVE Senior Joint & Gut Support Bundle
+        inferred_price: 36.50
+        rationale: A plausible future-listed or limited bundle aligned to the joint-plus-digestive growth narrative from the email context.
+    price_points:
+      - 8.00
+      - 8.75
+      - 9.65
+      - 11.00
+      - 12.15
+      - 15.00
+      - 32.00
+      - 36.50
+    bundles:
+      - YuMOVE Digestive Care Bundle
+      - YuMOVE Senior Joint & Gut Support Bundle
+    subscription: available
+    promotions:
+      - offer_name: Single purchase discount
+        offer_type: Percentage discount
+        details: 25% off single purchases visible in current terms.
+        evidence_source: https://yumove.co.uk/pages/terms-conditions
+      - offer_name: Subscription onboarding discount
+        offer_type: Subscription discount
+        details: Up to 50% off early subscription months, followed by lower ongoing discount levels depending on plan structure.
+        evidence_source: https://yumove.co.uk/pages/subscription-terms-conditions
+      - offer_name: Double points on digestive bites
+        offer_type: Loyalty incentive
+        details: Double points promotion visible for Digestive Support Pre, Pro & Postbiotic Bites.
+        evidence_source: https://yumove.co.uk/pages/terms-conditions
+    delivery_pricing:
+      free_delivery_threshold:
+      delivery_policy_summary: Model current and future UK consumer orders as free UK delivery rather than a threshold-based shipping rule.
+      evidence_source: https://yumove.co.uk/pages/delivery-and-returns
+  commercial_assumptions:
+    annual_revenue_assumption: 24800000
+    annual_growth_rates:
+      - period: FY2025_vs_FY2024
+        growth_rate: 0.162
+      - period: FY2026_vs_FY2025
+        growth_rate: 0.153
+    monthly_orders_assumption: 52750
+    aov_assumption: 39.20
+    growth_trend: Upward overall, with digestive growing faster than joint and subscription share rising over time.
+    repeat_rate_range: 0.20-0.41 across key maturity checkpoints
+    refund_rate_range: 0.032-0.036
+  metric_trajectory:
+    annual_revenue_by_year:
+      - year: 2024
+        revenue: 18500000
+      - year: 2025
+        revenue: 21500000
+      - year: 2026
+        revenue: 24800000
+    revenue_by_period:
+      - period: 2025-06
+        revenue: 1260000
+      - period: 2025-07
+        revenue: 1180000
+      - period: 2025-08
+        revenue: 1210000
+      - period: 2025-09
+        revenue: 1280000
+      - period: 2025-10
+        revenue: 1360000
+      - period: 2025-11
+        revenue: 1440000
+      - period: 2025-12
+        revenue: 1410000
+      - period: 2026-01
+        revenue: 1460000
+      - period: 2026-02
+        revenue: 1440000
+      - period: 2026-03
+        revenue: 1350000
+      - period: 2026-04
+        revenue: 1310000
+      - period: 2026-05
+        revenue: 1380000
+      - period: 2026-06
+        revenue: 1330000
+      - period: 2026-07
+        revenue: 1290000
+      - period: 2026-08
+        revenue: 1310000
+      - period: 2026-09
+        revenue: 1360000
+      - period: 2026-10
+        revenue: 1480000
+      - period: 2026-11
+        revenue: 1620000
+    orders_by_period:
+      - period: 2025-06
+        orders: 33600
+      - period: 2025-07
+        orders: 31600
+      - period: 2025-08
+        orders: 32300
+      - period: 2025-09
+        orders: 33400
+      - period: 2025-10
+        orders: 35000
+      - period: 2025-11
+        orders: 36500
+      - period: 2025-12
+        orders: 35600
+      - period: 2026-01
+        orders: 36600
+      - period: 2026-02
+        orders: 36000
+      - period: 2026-03
+        orders: 33900
+      - period: 2026-04
+        orders: 32800
+      - period: 2026-05
+        orders: 34400
+      - period: 2026-06
+        orders: 33600
+      - period: 2026-07
+        orders: 32500
+      - period: 2026-08
+        orders: 33000
+      - period: 2026-09
+        orders: 33800
+      - period: 2026-10
+        orders: 36100
+      - period: 2026-11
+        orders: 38900
+    aov_by_period:
+      - period: 2025-06
+        aov: 37.50
+      - period: 2025-11
+        aov: 39.45
+      - period: 2025-12
+        aov: 39.61
+      - period: 2026-03
+        aov: 39.82
+      - period: 2026-05
+        aov: 40.12
+      - period: 2026-11
+        aov: 41.65
+    repeat_rate_by_period:
+      - period: 2025-H2
+        repeat_share: 0.46
+      - period: 2026-H1
+        repeat_share: 0.50
+      - period: 2026-H2
+        repeat_share: 0.54
+    refund_rate_by_period:
+      - period: baseline
+        refund_rate: 0.032
+      - period: promo_window
+        refund_rate: 0.036
+    retention_checkpoints:
+      m1: 0.41
+      m3: 0.29
+      m6: 0.20
+      m12: 0.11
+    new_vs_repeat_mix_by_period:
+      - period: 2025-H2
+        new_share: 0.54
+        repeat_share: 0.46
+      - period: 2026-H1
+        new_share: 0.50
+        repeat_share: 0.50
+      - period: 2026-H2
+        new_share: 0.46
+        repeat_share: 0.54
+    seasonality_notes:
+      - Jan 1.12x, Feb 1.10x, Mar 1.03x, Apr 0.97x, May 1.02x, Jun 0.98x, Jul 0.93x, Aug 0.95x, Sep 0.99x, Oct 1.05x, Nov 1.11x, Dec 1.08x against a neutral month.
+      - Joint demand is stronger in colder and early-year periods; digestive grows faster but is more promo-sensitive.
+    inflection_points:
+      - date: 2025-07-25
+        metric: unattributed_channel_share
+        expected_change: Increase unattributed share from about 8% to 24% for roughly 10 days.
+        rationale: Model a short-lived channel tracking break in GA4 and Triple Whale.
+      - date: 2025-11-23
+        metric: unattributed_channel_share
+        expected_change: Increase unattributed share from about 9% to 19% for roughly 8 days.
+        rationale: Model a second channel tracking issue during a heavy promo period.
+      - date: 2026-03-14
+        metric: unattributed_channel_share
+        expected_change: Increase unattributed share from about 7% to 22% for roughly 7 days.
+        rationale: Model another short operational break affecting attribution continuity.
+      - date: 2026-05-18
+        metric: order_volume_and_aov
+        expected_change: Lift order volume by 16-20% and reduce realized AOV by 10-12% during the visible late-May single-purchase promo period.
+        rationale: Align modeled behavior to current site promotions.
+      - date: 2026-05-18
+        metric: subscription_starts_and_retention
+        expected_change: Lift new subscription starts by 28-35%, reduce first-order AOV by 12-18%, and improve M3 retention by about 3 points for those cohorts.
+        rationale: Align modeled behavior to visible subscription onboarding discounts.
+  seasonality:
+    peak_periods:
+      - January
+      - February
+      - November
+      - December
+    low_periods:
+      - July
+      - August
+    category_dynamics:
+      - Joint remains the larger revenue base, but digestive is the faster-growing category over the modeled window.
+      - Subscription growth smooths part of the volatility versus pure one-off demand.
+
+source_systems:
+  confirmed:
+    - name: Shopify
+      confirmation_source: call_note_confirmed
+      evidence_links:
+        - "/Users/julian/Downloads/Jenny + Tushar + Johannes.eml"
+      evidence_notes: Email thread explicitly states Shopify for web.
+      domain: commerce
+      export_shape: standard connector schema
+      platform_resources:
+        - products
+        - orders
+        - customers
+        - order_items
+      join_keys:
+        - product_id
+        - variant_id
+        - order_id
+        - customer_id
+      schema_basis: official documentation
+      schema_notes: Subscription identification should use selling-plan data on line items, not a simplistic order-level boolean.
+      known_limitations:
+        - No universally reliable order-level subscription flag in standard Shopify exports.
+    - name: OrderGroove
+      confirmation_source: call_note_confirmed
+      evidence_links:
+        - "/Users/julian/Downloads/Jenny + Tushar + Johannes.eml"
+      evidence_notes: Email thread explicitly states Shopify with OrderGroove for subscription.
+      domain: subscriptions
+      export_shape: vendor export
+      platform_resources:
+        - subscriptions
+        - subscription_orders
+        - events
+      join_keys:
+        - subscription_id
+        - customer_id
+        - order_id
+      schema_basis: official documentation
+      schema_notes: Treat OrderGroove as the authoritative source for subscription contracts and recurring order context.
+      known_limitations:
+        - Some history may need to be anchored back to Shopify order and customer entities.
+    - name: GA4
+      confirmation_source: user_confirmed
+      evidence_links:
+        - "/Users/julian/Downloads/Jenny + Tushar + Johannes.eml"
+      evidence_notes: The email says GA, and the user explicitly clarified that this means GA4.
+      domain: web_analytics
+      export_shape: reporting_api
+      platform_resources:
+        - purchase_events
+        - purchase_items
+      join_keys:
+        - transactionId
+      schema_basis: official documentation
+      schema_notes: Use the reporting/API-aligned schema, not BigQuery export, for this workflow.
+      known_limitations:
+        - Channel breakage and unattributed spikes are intentionally modeled in a few short windows.
+    - name: Bloomreach
+      confirmation_source: user_confirmed
+      evidence_links:
+        - "/Users/julian/Downloads/Jenny + Tushar + Johannes.eml"
+      evidence_notes: Email says the business is migrating to Bloomreach CRM and the user asked to use Bloomreach rather than Emarsys.
+      domain: lifecycle
+      export_shape: vendor export
+      platform_resources:
+        - campaign_events
+      join_keys:
+        - email
+        - customer_id
+      schema_basis: official documentation
+      schema_notes: Limit lifecycle generation to 3 historic months and 6 future months and anchor records to users and orders.
+      known_limitations:
+        - Shorter time window is intentional to control volume and reflect a more recent lifecycle view.
+    - name: Zendesk
+      confirmation_source: call_note_confirmed
+      evidence_links:
+        - "/Users/julian/Downloads/Jenny + Tushar + Johannes.eml"
+      evidence_notes: Email explicitly states Zendesk for customer care.
+      domain: support
+      export_shape: vendor export
+      platform_resources:
+        - tickets
+      join_keys:
+        - customer_id
+        - order_id
+        - email
+      schema_basis: official documentation
+      schema_notes: Restrict to pet-owner tickets only for simplicity.
+      known_limitations:
+        - Exclude broader contact-us or unrelated support themes from this phase.
+    - name: Triple Whale
+      confirmation_source: user_confirmed
+      evidence_links:
+        - "/Users/julian/Downloads/Jenny + Tushar + Johannes.eml"
+      evidence_notes: Email references Triple Whale as the in-week directional check and the user asked to assume only 9 months of history.
+      domain: attribution
+      export_shape: api
+      platform_resources:
+        - attributed_orders
+        - customer_journey_events
+      join_keys:
+        - order_id
+        - customer_id
+      schema_basis: official documentation
+      schema_notes: Only 9 historic months should be generated because implementation is assumed to be recent.
+      known_limitations:
+        - Attribution continuity should intentionally show a few channel-breakage windows.
+    - name: Stape
+      confirmation_source: call_note_confirmed
+      evidence_links:
+        - "/Users/julian/Downloads/Jenny + Tushar + Johannes.eml"
+      evidence_notes: Email explicitly references Stape server-side tracking.
+      domain: tracking_infrastructure
+      export_shape: none
+      platform_resources: []
+      join_keys: []
+      schema_basis: client-provided schema notes
+      schema_notes: Confirmed context system only; no raw source file will be generated in phase 1.
+      known_limitations:
+        - Tracking behavior is expressed through GA4 and Triple Whale effects rather than a separate Stape extract.
+  open_questions: []
+
+standardization:
+  canonical_tables:
+    - users
+    - orders
+  mapping_notes:
+    - No stage or analytics outputs should be generated until raw source outputs are generated, validated, and reviewed.
+
+data_issues:
+  selected:
+    - issue: Email casing or whitespace drift
+      severity: low
+      expected_prevalence: 1-3% of Shopify and Bloomreach customer/contact records
+      affected_systems:
+        - Shopify
+        - Bloomreach
+      visibility: subtle
+      rationale: Common and believable identity-normalization issue across commerce and lifecycle systems.
+      notes: Use lower/trim normalization to reconcile.
+    - issue: Guest or lifecycle identity fragmentation
+      severity: medium
+      expected_prevalence: 3-6% of lifecycle-linked users
+      affected_systems:
+        - Shopify
+        - Bloomreach
+        - GA4
+      visibility: subtle
+      rationale: Believable across D2C commerce and lifecycle joins, especially around CRM migration and guest behavior.
+      notes: Some lifecycle or analytics entities should require fallback matching rather than a perfect key join.
+    - issue: Partial attribution coverage
+      severity: medium
+      expected_prevalence: 5-12% of attributed order joins
+      affected_systems:
+        - GA4
+        - Triple Whale
+      visibility: subtle
+      rationale: Fits the recent Triple Whale implementation and general attribution incompleteness.
+      notes: Some orders should be present in commerce but unattributed or only partially attributed downstream.
+    - issue: Channel tracking breakage with unattributed spike
+      severity: medium
+      expected_prevalence: 3 short windows across the 18-month operational horizon
+      affected_systems:
+        - GA4
+        - Triple Whale
+      visibility: obvious
+      rationale: User explicitly requested channel tracking to break at a few points in the series.
+      notes: Model short periods where unattributed share spikes materially above baseline.
+    - issue: Recent-system-window truncation
+      severity: medium
+      expected_prevalence: Systemic by design for Bloomreach and Triple Whale
+      affected_systems:
+        - Bloomreach
+        - Triple Whale
+      visibility: obvious
+      rationale: Approved shorter windows for these systems should read like genuine implementation-history constraints.
+      notes: Keep lifecycle and attribution history intentionally shorter than core commerce history.
+    - issue: Enum and status drift
+      severity: low
+      expected_prevalence: Low scattered prevalence across CRM and support exports
+      affected_systems:
+        - Bloomreach
+        - Zendesk
+      visibility: subtle
+      rationale: Realistic export inconsistency without overwhelming the dataset.
+      notes: Include small casing or status-variant inconsistencies.
+    - issue: Promo-acquired cohort quality shift
+      severity: medium
+      expected_prevalence: Concentrated around visible discount windows
+      affected_systems:
+        - Shopify
+        - OrderGroove
+        - GA4
+        - Triple Whale
+      visibility: hidden_until_standardization
+      rationale: Believable and analytically useful given the live visible promotional mechanics.
+      notes: Promo cohorts should show lower initial AOV and different repeat behavior than baseline cohorts.
+    - issue: Duplicate-looking operational rows
+      severity: low
+      expected_prevalence: Less than 0.5% of selected operational datasets
+      affected_systems:
+        - Shopify
+        - Zendesk
+      visibility: subtle
+      rationale: Light operational mess improves realism without making the sources look broken.
+      notes: Keep this sparse and platform-appropriate.
+
+execution_plan:
+  approval_status: approved
+  current_phase: source_generation
+  scope_summary: Generate only raw source-shaped datasets for YuMOVE using a products-first dependency model, reduced to 12 historic months plus 6 future months with operational row scaling to keep the build practical.
+  approved_time_window:
+    historic_months: 12
+    future_months: 6
+    override_reason: Reduced from the default 18 historic months after the workflow volume gate projected an unwieldy raw-source build.
+  catalog_and_promotion_summary: Ground products to the current YuMOVE site catalog and visible live promotions, model free UK delivery, and carry promo mechanics into historical and future order behavior where appropriate.
+  metric_assumptions_summary: Model the yumove.co.uk store at a realistic business scale of 18.5m in 2024, 21.5m in 2025, and 24.8m in 2026, but generate only a 0.15x representative operational slice that preserves growth, AOV, retention, seasonality, subscription mix, and promo effects.
+  volume_summary: Estimated full-scale raw generation would likely exceed 5 million rows, so the approved plan reduces history to 12 months and scales operational row counts to 0.15x, bringing projected raw rows down to roughly 1.7 million. Products are treated as a protected low-row-count dimension and should not be reduced by the operational scaling rule.
+  generation_sequence:
+    - step: generate_products
+      depends_on: []
+    - step: generate_orders
+      depends_on:
+        - generate_products
+    - step: generate_customers
+      depends_on:
+        - generate_orders
+        - generate_products
+    - step: generate_dependent_datasets
+      depends_on:
+        - generate_products
+        - generate_orders
+        - generate_customers
+  parallel_groups:
+    - name: downstream_raw_sources
+      members:
+        - shopify_order_items
+        - ordergroove
+        - ga4
+        - bloomreach
+        - zendesk
+        - triple_whale
+      depends_on:
+        - generate_orders
+        - generate_customers
+        - generate_products
+  phase_gates:
+    - phase: source_generation
+      approval_required_before_next: true
+    - phase: stage_standardization
+      approval_required_before_next: true
+    - phase: analytics_generation
+      approval_required_before_next: false
+  consistency_checks:
+    - foreign_key_reconciliation
+    - timestamp_plausibility
+    - cross_system_entity_coverage
+  validation_tests:
+    - name: primary_key_uniqueness
+      threshold:
+    - name: foreign_key_reconciliation
+      threshold:
+    - name: ga4_order_timestamp_alignment
+      threshold: 30_minutes
+    - name: modeling_window_bounds
+      threshold:
+        historic_months: 12
+        future_months: 6
+    - name: source_specific_window_bounds
+      threshold:
+        bloomreach_historic_months: 3
+        triple_whale_historic_months: 9
+    - name: promotion_and_discount_consistency
+      threshold:
+    - name: metric_trajectory_alignment
+      threshold:
+    - name: operational_row_volume_scaling
+      threshold:
+        scaling_factor: 0.15
+  open_questions: []
+
+generation:
+  company_slug: yumove
+  output_workspace: ../synthetic_data
+  raw_extracts_to_build:
+    - shopify_products.csv
+    - shopify_orders.csv
+    - shopify_customers.csv
+    - shopify_order_items.csv
+    - ordergroove_subscriptions.csv
+    - ordergroove_subscription_orders.csv
+    - ordergroove_events.csv
+    - ga4_reporting_purchase_events.csv
+    - ga4_reporting_purchase_items.csv
+    - bloomreach_campaign_events.csv
+    - zendesk_tickets.csv
+    - triple_whale_attributed_orders.csv
+    - triple_whale_customer_journey_events.csv
+  stage_outputs:
+    - users.csv
+    - orders.csv
+  analytics_outputs:
+    - monthly_cohort_retention.csv

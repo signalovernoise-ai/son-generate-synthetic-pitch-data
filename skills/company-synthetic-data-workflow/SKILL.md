@@ -12,6 +12,8 @@ Keep the workflow anchored to the repo at `/Users/julian/Documents/son-generate-
 Do not infer source systems from category norms alone. Only include systems that are confirmed by public evidence, direct user input, or call notes provided by the user.
 Default to a modeling window of 18 months of historic data plus 6 months of future data so pitch datasets remain current for longer. Only change this if the user explicitly requests a different time period during setup or plan review.
 For high-volume source systems such as CRM, support, or event streams, propose a shorter source-specific window when that keeps the dataset practical while preserving the story. Anchor those shorter extracts back to the core products, orders, and users datasets.
+Estimate row volumes before generation. If the proposed raw-source build is likely to exceed a practical threshold, first propose reducing the historic window from 18 months to 12 months, and then scale down operational row volume while preserving the approved business metrics, mix, and trajectories.
+Do not use volume controls to shrink low-row-count dimension tables when their impact on total row volume is minimal. Tables such as products, core catalog dimensions, or other small realism-driving reference data should stay as complete as the evidence allows.
 
 ## Outcomes
 
@@ -69,7 +71,21 @@ Before generating any data, define the expected shape of the business over time,
 Do not keep these assumptions vague. Quantify them in a way the user can review and challenge before generation starts.
 Record these as explicit pre-generation assumptions in the setup artifact and include them in the approval plan.
 
-5. Confirm source systems with evidence.
+5. Estimate dataset volume before generation.
+Estimate the likely row counts for the raw source outputs, especially:
+   - products
+   - orders
+   - customers
+   - order items
+   - analytics and attribution event tables
+   - CRM or lifecycle event tables
+If the projected build is likely to exceed about 5 million total raw rows or otherwise become unwieldy for generation, validation, and review:
+   - first propose reducing the historic window from 18 months to 12 months
+   - then, if still too large, propose scaling down operational row counts while preserving the approved commercial metrics, growth rates, retention patterns, seasonality, promo effects, and issue prevalence
+Apply these reductions primarily to high-volume fact and event tables such as orders, order items, lifecycle events, support events, analytics events, and attribution journeys. Keep low-row-count dimensions such as products as complete as possible.
+Do not silently shrink the dataset. Put the proposed reduction into the approval plan for user review.
+
+6. Confirm source systems with evidence.
 Only include source systems that are backed by one of:
    - public evidence such as vendor directories, job postings, engineering writeups, or exposed trackers
    - direct user confirmation
@@ -77,7 +93,7 @@ Only include source systems that are backed by one of:
 Record the evidence for each system in the setup artifact.
 If a system is plausible but unconfirmed, leave it out of generation and list it as an open question instead.
 
-6. Present an execution plan and wait for approval.
+7. Present an execution plan and wait for approval.
 Before generating or changing any dataset, present the plan back to the user for review, refinement, and explicit approval.
 The plan must include:
    - company brief and modeling scope
@@ -92,13 +108,16 @@ The plan must include:
    - raw source outputs to build
    - stage outputs and analytics outputs planned for later phases
    - any proposed source-specific window reductions for large datasets
+   - estimated raw row counts by dataset
+   - any proposed volume controls, including a reduction to 12 historic months and any operational row-count scaling
+   - explicit note on which datasets are protected from scaling because they are low-row-count dimensions
    - proposed data-issue mix, including severity, expected prevalence, affected systems, and why each issue belongs in the dataset
    - post-generation validation tests and thresholds
    - generation order and dependencies
    - open questions, constraints, and assumptions
 Do not execute generation until the user approves the plan.
 
-7. Select data issues.
+8. Select data issues.
 Read `references/data-issues-menu.md`, choose only the issues that fit the company and systems, and record:
    - whether the issue is present
    - severity
@@ -107,13 +126,13 @@ Read `references/data-issues-menu.md`, choose only the issues that fit the compa
    - whether it should be obvious, subtle, or hidden until standardization
    - why it is believable for this company
 
-8. Define downstream outputs without generating them yet.
+9. Define downstream outputs without generating them yet.
 Read `references/standard-source-schemas/index.md` when selecting platform-specific source tables.
 Read `references/standard-stage-schemas/index.md` when planning how source-shaped data will later map into the stage schemas we control.
 Read `references/standard-analytics-schemas/index.md` when planning derived analytical outputs that will later be built from stage data.
 Do not generate stage or analytics outputs until the raw source datasets have been generated, validated, reviewed, and accepted by the user.
 
-9. Generate data in the external workspace using dependency-aware sequencing.
+10. Generate data in the external workspace using dependency-aware sequencing.
 Keep generated CSVs outside the repo. The Python modules in `synthetic_pitch_data` should read and write in the external `synthetic_data/data/...` tree.
 Generate in this order unless the user approves a different dependency model:
    - first generate products using the observed current catalog as the present-day anchor plus a sensible historic and future tail where needed
@@ -122,7 +141,7 @@ Generate in this order unless the user approves a different dependency model:
    - only after products, orders, and customers are stable, parallelize dependent raw source datasets such as GA4, Bloomreach, Zendesk, order items, subscription events, or attribution tables
 All downstream datasets must reconcile to the same primary and foreign keys, event order, and realistic timestamps unless a selected data issue intentionally introduces a controlled mismatch.
 
-10. Run raw-source post-generation tests.
+11. Run raw-source post-generation tests.
 Execute deterministic validation checks after raw source generation and before any standardization or analytics work.
 At minimum, test that:
    - required primary keys are unique in each source dataset where uniqueness is expected
@@ -134,12 +153,13 @@ At minimum, test that:
 Record any intentional exceptions that are caused by selected data issues.
 Pause for user review after raw-source validation if stage or analytics outputs have not yet been approved for execution.
 
-11. Validate realism and cross-system consistency.
+12. Validate realism and cross-system consistency.
 Sense-check revenue, refund rates, country mix, AOV, promotions, and seasonality against the company and category brief.
 Also verify that:
    - primary and foreign keys reconcile across systems
    - downstream timestamps are plausible relative to the products, orders, and customers ground truth
    - historic and future records stay within the approved modeling window
+   - generated row volumes stay within the approved operational scale for the project
    - the generated time series follows the approved quantified growth, seasonality, AOV, refund, and retention assumptions closely enough to be believable
    - product names, prices, and promotion patterns reflect the observed current site and sensible historical evolution
    - support, lifecycle, and attribution outputs reference real core entities and approved source records

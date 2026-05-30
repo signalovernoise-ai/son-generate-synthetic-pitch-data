@@ -24,6 +24,24 @@ source_time_windows:
       rationale:
       anchor_to_tables: []
 
+volume_plan:
+  estimated_raw_rows:
+    products:
+    orders:
+    customers:
+    order_items:
+    crm_events:
+    attribution_events:
+    support_tickets:
+    total:
+  threshold_total_raw_rows: 5000000
+  protected_dimensions:
+    - products
+  reduction_actions:
+    reduce_historic_window_to_months:
+    row_volume_scaling_factor:
+    rationale:
+
 research:
   sources: []
   summary:
@@ -126,6 +144,7 @@ execution_plan:
     override_reason:
   catalog_and_promotion_summary:
   metric_assumptions_summary:
+  volume_summary:
   generation_sequence:
     - step: generate_products
       depends_on: []

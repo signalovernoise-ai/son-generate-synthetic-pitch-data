@@ -69,7 +69,28 @@ Quantify these wherever possible:
 - baseline refund rate
 - expected uplift or drag from promotions, launches, seasonality, or migration events
 
-## 4. Source-system inventory
+## 4. Volume estimate
+
+Before generation, estimate likely row counts for:
+
+- products
+- orders
+- customers
+- order items
+- CRM / lifecycle events
+- attribution events
+- support tickets
+
+If projected total raw rows look too large to generate and review comfortably, use this escalation order:
+
+- first propose reducing the historic window from 18 months to 12 months
+- then propose scaling down operational row counts while preserving the approved business metrics and time-series behavior
+
+Do not shrink low-row-count dimension tables such as products or other small reference tables unless the user explicitly asks for it. Apply scaling mainly to high-volume fact and event tables.
+
+Record the estimated row counts and the reason for any proposed reduction in the approval plan.
+
+## 5. Source-system inventory
 
 For each source system capture:
 
@@ -85,7 +106,7 @@ For each source system capture:
 
 If a system cannot be confirmed, do not include it in generation. Record it as an open question instead.
 
-## 5. Plan and approval checkpoint
+## 6. Plan and approval checkpoint
 
 Before any generation work begins, present a plan for user approval that covers:
 
@@ -101,6 +122,9 @@ Before any generation work begins, present a plan for user approval that covers:
 - raw source outputs to build now
 - stage tables to build later
 - analytics tables to build later
+- estimated raw row counts by dataset
+- any proposed volume controls, including a cut to 12 historic months or operational row-count scaling
+- which low-row-count dimensions are protected from scaling
 - proposed data-issue mix, severity, and expected prevalence
 - post-generation validation tests and thresholds
 - generation sequence and any parallelizable groups
@@ -108,7 +132,7 @@ Before any generation work begins, present a plan for user approval that covers:
 
 Do not execute generation until the user approves or refines the plan.
 
-## 6. Data-issue selection
+## 7. Data-issue selection
 
 Use the issue menu to choose realistic imperfections:
 
@@ -132,7 +156,7 @@ For each selected issue, define:
 - visibility to the downstream analyst
 - rationale for why it fits the company and time period
 
-## 7. Output design
+## 8. Output design
 
 - Raw source-shaped extracts by system
 - Platform-specific standard tables by system, for example Shopify orders and customers or Zendesk tickets
@@ -141,7 +165,7 @@ For each selected issue, define:
 - Product tables grounded in the observed current catalog, with sensible historic or delisted extensions where needed
 - Notes on what the AI system should detect and recommend
 
-## 8. Generation sequencing
+## 9. Generation sequencing
 
 - Generate products first, grounded in the observed current catalog and pricing
 - Generate orders second as the commercial ground truth
@@ -152,13 +176,13 @@ For each selected issue, define:
 - Keep all generated records inside the approved modeling window
 - For large datasets such as CRM, support, or event streams, consider a shorter approved source window anchored to the core products, orders, and users records
 
-## 9. Phase gates
+## 10. Phase gates
 
 - Do not generate stage outputs until raw source datasets have been generated, validated, and accepted by the user
 - Do not generate analytics outputs until stage outputs have been generated, validated, and accepted by the user
 - Treat source, stage, and analytics as separate review checkpoints
 
-## 10. Post-generation validation
+## 11. Post-generation validation
 
 - Check primary-key uniqueness in each controlled output
 - Check foreign-key reconciliation across orders, customers, products, order items, and downstream datasets
@@ -167,5 +191,6 @@ For each selected issue, define:
 - Check that promotion and discount fields are consistent with the modeled catalog and offer strategy
 - Check that all records fall within the approved historic and future date window
 - Check that any reduced windows for large source systems are actually respected
+- Check that any approved row-volume scaling has been applied consistently
 - Check that revenue, order volume, AOV, refund rate, and repeat behavior follow the approved quantified pre-generation trajectories
 - Record any intentional validation failures that are present because of selected data issues
