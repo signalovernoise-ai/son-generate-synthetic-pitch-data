@@ -1,0 +1,1 @@
+"""Sample PostgreSQL company generators."""

@@ -1,0 +1,139 @@
+company:
+  name:
+  website:
+  generated_on:
+  time_window:
+    historic_months: 18
+    future_months: 6
+    override_reason:
+  primary_market:
+  currency:
+  category:
+  subcategory:
+  business_model:
+  confidence_note:
+
+research:
+  sources: []
+  summary:
+  product_catalog:
+    hero_products: []
+    current_products:
+      - name:
+        current_price:
+        currency:
+        product_url:
+        evidence_notes:
+    historic_or_delisted_products:
+      - name:
+        inferred_price:
+        rationale:
+    price_points: []
+    bundles: []
+    subscription: unknown
+    promotions:
+      - offer_name:
+        offer_type:
+        details:
+        evidence_source:
+  commercial_assumptions:
+    revenue_band:
+    monthly_orders_band:
+    aov_range:
+    growth_trend:
+    repeat_rate_range:
+    refund_rate_range:
+  seasonality:
+    peak_periods: []
+    low_periods: []
+    category_dynamics: []
+
+source_systems:
+  confirmed:
+    - name:
+      confirmation_source:
+      evidence_links: []
+      evidence_notes:
+      domain:
+      export_shape:
+      platform_resources: []
+      join_keys: []
+      schema_basis:
+      schema_notes:
+      known_limitations: []
+  open_questions:
+    - system_name:
+      notes:
+
+standardization:
+  canonical_tables:
+    - users
+    - orders
+  mapping_notes: []
+
+data_issues:
+  selected:
+    - issue:
+      severity:
+      affected_systems: []
+      visibility:
+      notes:
+
+execution_plan:
+  approval_status: draft
+  scope_summary:
+  approved_time_window:
+    historic_months: 18
+    future_months: 6
+    override_reason:
+  catalog_and_promotion_summary:
+  generation_sequence:
+    - step: generate_orders
+      depends_on: []
+    - step: generate_customers
+      depends_on:
+        - generate_orders
+    - step: generate_products
+      depends_on:
+        - generate_orders
+        - generate_customers
+    - step: generate_dependent_datasets
+      depends_on:
+        - generate_orders
+        - generate_customers
+        - generate_products
+  parallel_groups:
+    - name:
+      members: []
+      depends_on:
+        - generate_orders
+        - generate_customers
+        - generate_products
+  consistency_checks:
+    - foreign_key_reconciliation
+    - timestamp_plausibility
+    - cross_system_entity_coverage
+  validation_tests:
+    - name: primary_key_uniqueness
+      threshold:
+    - name: foreign_key_reconciliation
+      threshold:
+    - name: ga4_order_timestamp_alignment
+      threshold: 30_minutes
+    - name: modeling_window_bounds
+      threshold:
+        historic_months: 18
+        future_months: 6
+    - name: promotion_and_discount_consistency
+      threshold:
+  open_questions: []
+
+generation:
+  company_slug:
+  output_workspace:
+  raw_extracts_to_build: []
+  stage_outputs:
+    - users.csv
+    - orders.csv
+  analytics_outputs:
+    - monthly_cohort_retention.csv

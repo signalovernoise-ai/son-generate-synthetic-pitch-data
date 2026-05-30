@@ -1,0 +1,1 @@
+"""Sample Shopify company generators."""
