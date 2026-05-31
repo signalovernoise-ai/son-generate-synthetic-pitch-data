@@ -1,0 +1,608 @@
+company:
+  name: Luminary Vitamins
+  website: https://www.luminaryvitamins.com/
+  generated_on: 2026-05-31
+  time_window:
+    historic_months: 18
+    future_months: 6
+    override_reason: Using the default 18 historic + 6 future window (no override). Brand was selling by late 2024, so 2024-12 start does not predate launch.
+  primary_market: US
+  currency: USD
+  category: Fertility & prenatal supplements
+  subcategory: Doctor-formulated fertility/prenatal gummies (male & female)
+  business_model: Subscription-led D2C (replenishment) with one-time purchases
+  confidence_note: Catalog and pricing are grounded in the live Shopify storefront (products.json, 2026-05-31). Systems, paid-channel dynamics, and the $10M run-rate target come from the 2026-05-25 Ari (Elo Health) call notes. Commercial scale uses a deliberately conservative read pending direct numbers.
+
+source_time_windows:
+  default:
+    historic_months: 18
+    future_months: 6
+  overrides:
+    - system_name: Klaviyo
+      historic_months: 12
+      future_months: 6
+      rationale: Trim the email/SMS event stream to the last 12 months to control row volume while preserving the lifecycle story. Anchored to customers and orders.
+      anchor_to_tables:
+        - customers
+        - orders
+    - system_name: Google Ads
+      historic_months: 0
+      future_months: 6
+      rationale: Google Ads was blocked historically by keyword restrictions ("sperm") and is assumed unblocked the week of 2026-05-25. Performance data therefore exists only from 2026-05-25 forward — zero historic rows — matching reality.
+      anchor_to_tables:
+        - orders
+
+volume_plan:
+  estimated_raw_rows:
+    products: 12
+    orders: 86000
+    customers: 56000
+    order_items: 104000
+    crm_events: 150000
+    ga4_events: 95000  # web-checkout orders only; subscription renewals bypass the GA4 pixel
+    ad_performance: 42000
+    support_tickets: 3000
+    total: 1585000
+  threshold_total_raw_rows: 5000000
+  protected_dimensions:
+    - products
+  reduction_actions:
+    reduce_historic_window_to_months:
+    row_volume_scaling_factor: 1.0
+    rationale: Projected raw build (~1.6M rows) is well under the 5M threshold, so no historic-window cut or operational scaling is applied. The Klaviyo 12-month source window already caps the largest table. Products stay complete as a protected dimension.
+
+research:
+  sources:
+    - https://www.luminaryvitamins.com/
+    - https://www.luminaryvitamins.com/products.json
+    - https://www.luminaryvitamins.com/products/male-sperm-support-gummies
+    - https://www.luminaryvitamins.com/pages/about-us
+    - https://www.amazon.com/Luminary-Vitamins-Create-Nutrient-Gummies/dp/B0DQTBBYXS
+    - https://www.usfertility.com/newsroom/us-fertility-and-luminary-vitamins-redefine-fertility-by-offering-video-education-cutting-edge-technology-and-targeted-nutraceuticals
+    - Ari (Elo Health) call notes, 2026-05-25
+  summary: >
+    Luminary Vitamins is a US DTC brand of doctor-formulated fertility and prenatal gummy
+    supplements on Shopify, spanning the reproductive journey (preconception, pregnancy,
+    postpartum, hormonal/PCOS) plus male fertility (sperm support) and general wellbeing.
+    Clinical positioning at $89 vs ~$25 mass competitors, a strong ~18% PDP conversion rate,
+    and a stated $10M run-rate target. Subscriptions run on Loop; the brand cannot compete on
+    Amazon search or discount aggressively. Google Ads is blocked on the "sperm" keyword and is
+    being unblocked (L Catterton assist); Meta is the primary live paid channel.
+  product_catalog:
+    hero_products:
+      - Sperm Support Gummies
+      - Preconception Gummies
+      - Pregnancy Gummies
+      - His & Hers Fertility Bundle
+    current_products:
+      - name: Egg Support Gummies
+        current_price: 89.00
+        currency: USD
+        product_url: https://www.luminaryvitamins.com/
+        evidence_notes: products.json on 2026-05-31, single variant at $89.00.
+      - name: Preconception Gummies
+        current_price: 89.00
+        currency: USD
+        product_url: https://www.luminaryvitamins.com/
+        evidence_notes: products.json on 2026-05-31, single variant at $89.00.
+      - name: Pregnancy Gummies
+        current_price: 89.00
+        currency: USD
+        product_url: https://www.luminaryvitamins.com/
+        evidence_notes: products.json on 2026-05-31, single variant at $89.00.
+      - name: Postpartum Gummies
+        current_price: 89.00
+        currency: USD
+        product_url: https://www.luminaryvitamins.com/
+        evidence_notes: products.json on 2026-05-31, single variant at $89.00.
+      - name: Hormonal Health & PCOS Gummies
+        current_price: 89.00
+        currency: USD
+        product_url: https://www.luminaryvitamins.com/
+        evidence_notes: products.json on 2026-05-31, single variant at $89.00.
+      - name: Sperm Support Gummies
+        current_price: 89.00
+        currency: USD
+        product_url: https://www.luminaryvitamins.com/products/male-sperm-support-gummies
+        evidence_notes: products.json on 2026-05-31; PDP shows 4.7 stars (60 reviews).
+      - name: Men's Wellbeing Gummies
+        current_price: 89.00
+        currency: USD
+        product_url: https://www.luminaryvitamins.com/
+        evidence_notes: products.json on 2026-05-31, single variant at $89.00.
+      - name: Wellbeing Gummies
+        current_price: 89.00
+        currency: USD
+        product_url: https://www.luminaryvitamins.com/
+        evidence_notes: products.json on 2026-05-31, single variant at $89.00.
+      - name: His & Hers Fertility Bundle
+        current_price: 178.00
+        currency: USD
+        product_url: https://www.luminaryvitamins.com/
+        evidence_notes: products.json on 2026-05-31; bundle of two single products (2 x $89, no bundle discount observed).
+    historic_or_delisted_products:
+      - name: Create for Men (legacy male fertility naming)
+        inferred_price: 89.00
+        rationale: Amazon listing and older marketing use "Create"/"Thrive" naming; modeled as an adjacent legacy SKU that maps to today's Sperm Support / Men's Wellbeing line.
+      - name: Fertility Starter Duo (retired bundle)
+        inferred_price: 169.00
+        rationale: Plausible early bundle adjacent to the current His & Hers bundle and price architecture.
+    price_points:
+      - 89.00
+      - 169.00
+      - 178.00
+    bundles:
+      - His & Hers Fertility Bundle
+    subscription: available
+    subscription_platform: Loop Subscriptions
+    subscription_modeling: Modeled via Shopify selling plans on line items (is_subscription derived in staging) as recurring monthly renewals with tenure-based fertility churn — subscribers reorder until they cancel, driving the retention curve. No separate Loop extract in this phase.
+    promotions:
+      - offer_name: First-order welcome offer
+        offer_type: New-customer discount
+        details: Welcome codes visible in site theme (e.g. WELCOME28; ~$5-$15 / ~10-15% off first order). Clinical positioning means no deep discounting of the $89 list price.
+        evidence_source: https://www.luminaryvitamins.com/ (homepage theme strings)
+      - offer_name: Subscribe & save
+        offer_type: Subscription discount
+        details: Assumed ~15% off on subscription orders plus free shipping (site did not expose exact terms; user-approved assumption).
+        evidence_source: user-approved assumption
+    delivery_pricing:
+      free_delivery_threshold:
+      delivery_policy_summary: Model blanket free US shipping (no threshold). "Free shipping" appears prominently in site theme. Shipping is excluded from AOV per metric-definitions.
+      evidence_source: https://www.luminaryvitamins.com/ (homepage theme strings)
+  commercial_assumptions:
+    annual_revenue_assumption: 5640000
+    annual_growth_rates:
+      - period: FY2026_vs_FY2025
+        growth_rate: 1.36
+    monthly_orders_assumption: 4947
+    aov_assumption: 95.00
+    growth_trend: Early-stage hypergrowth ramp toward (but not yet at) the $10M run-rate target; subscription-led replenishment (subscribers reorder monthly until fertility churn); Meta-led acquisition with Google Ads added from late May 2026.
+    repeat_rate_range: repeat order-share ~0.60-0.64; subscription order-share ~0.62; ~2.6 orders per buyer
+    refund_rate_range: 0.040-0.045
+    scale_note: Deliberately conservative read — current run-rate ~$5.6M (May 2026) growing toward ~$7.8M by Nov 2026, below the stated $10M target.
+  metric_trajectory:
+    annual_revenue_by_year:
+      - year: 2024
+        revenue: 130000
+      - year: 2025
+        revenue: 2603000
+      - year: 2026
+        revenue: 6150000
+    revenue_by_period:
+      - period: 2024-12
+        revenue: 130000
+      - period: 2025-01
+        revenue: 150000
+      - period: 2025-02
+        revenue: 158000
+      - period: 2025-03
+        revenue: 168000
+      - period: 2025-04
+        revenue: 178000
+      - period: 2025-05
+        revenue: 192000
+      - period: 2025-06
+        revenue: 205000
+      - period: 2025-07
+        revenue: 215000
+      - period: 2025-08
+        revenue: 228000
+      - period: 2025-09
+        revenue: 248000
+      - period: 2025-10
+        revenue: 268000
+      - period: 2025-11
+        revenue: 288000
+      - period: 2025-12
+        revenue: 305000
+      - period: 2026-01
+        revenue: 360000
+      - period: 2026-02
+        revenue: 380000
+      - period: 2026-03
+        revenue: 405000
+      - period: 2026-04
+        revenue: 435000
+      - period: 2026-05
+        revenue: 470000
+      - period: 2026-06
+        revenue: 500000
+      - period: 2026-07
+        revenue: 525000
+      - period: 2026-08
+        revenue: 552000
+      - period: 2026-09
+        revenue: 580000
+      - period: 2026-10
+        revenue: 612000
+      - period: 2026-11
+        revenue: 650000
+    orders_by_period:
+      - period: 2024-12
+        orders: 1444
+      - period: 2025-01
+        orders: 1667
+      - period: 2025-02
+        orders: 1736
+      - period: 2025-03
+        orders: 1846
+      - period: 2025-04
+        orders: 1956
+      - period: 2025-05
+        orders: 2087
+      - period: 2025-06
+        orders: 2228
+      - period: 2025-07
+        orders: 2337
+      - period: 2025-08
+        orders: 2452
+      - period: 2025-09
+        orders: 2667
+      - period: 2025-10
+        orders: 2882
+      - period: 2025-11
+        orders: 3064
+      - period: 2025-12
+        orders: 3245
+      - period: 2026-01
+        orders: 3830
+      - period: 2026-02
+        orders: 4000
+      - period: 2026-03
+        orders: 4263
+      - period: 2026-04
+        orders: 4579
+      - period: 2026-05
+        orders: 4947
+      - period: 2026-06
+        orders: 5208
+      - period: 2026-07
+        orders: 5469
+      - period: 2026-08
+        orders: 5750
+      - period: 2026-09
+        orders: 5979
+      - period: 2026-10
+        orders: 6309
+      - period: 2026-11
+        orders: 6701
+    aov_by_period:
+      - period: 2024-12
+        aov: 90.00
+      - period: 2025-06
+        aov: 92.00
+      - period: 2025-11
+        aov: 94.00
+      - period: 2026-05
+        aov: 95.00
+      - period: 2026-11
+        aov: 97.00
+    repeat_rate_by_period:
+      - period: 2025-H2
+        repeat_share: 0.63
+      - period: 2026-H1
+        repeat_share: 0.61
+      - period: 2026-H2
+        repeat_share: 0.64
+    refund_rate_by_period:
+      - period: baseline
+        refund_rate: 0.040
+      - period: promo_window
+        refund_rate: 0.045
+    # Realized fertility-realistic curve: front-loaded then steep churn on conception/birth.
+    # Single-month cohort repeat rate (fraction of a cohort ordering in that month offset).
+    retention_checkpoints:
+      m1: 0.32
+      m3: 0.21
+      m6: 0.12
+      m12: 0.04
+    new_vs_repeat_mix_by_period:
+      - period: 2025-H2
+        new_share: 0.37
+        repeat_share: 0.63
+      - period: 2026-H1
+        new_share: 0.39
+        repeat_share: 0.61
+      - period: 2026-H2
+        new_share: 0.36
+        repeat_share: 0.64
+    seasonality_notes:
+      - Jan 1.12x, Feb 1.06x, Mar 1.02x, Apr 0.98x, May 1.00x, Jun 0.97x, Jul 0.95x, Aug 0.96x, Sep 1.00x, Oct 1.02x, Nov 1.05x, Dec 1.00x against a neutral month. The growth ramp dominates seasonality at this stage.
+      - Mild January lift reflects new-year "trying to conceive" intent; Q4 is flat (low gifting for this category).
+    inflection_points:
+      - date: 2026-05-25
+        metric: paid_search_channel_introduction
+        expected_change: Google Ads becomes available; paid-search spend and platform-reported performance appear from this date forward only (zero historic). A small, growing share of GA4 sessions/orders attribute to Paid Search from June 2026.
+        rationale: Google Ads keyword block ("sperm") assumed lifted the week of 2026-05-25; matches the future-only Google Ads source window.
+      - date: 2026-06-01
+        metric: order_volume_growth
+        expected_change: Acceleration in monthly order growth as Meta scales and paid search is added; reflected in the rising future-window orders path.
+        rationale: Combined Meta scaling and the new Google Ads channel in the future window.
+  seasonality:
+    peak_periods:
+      - January
+      - November
+    low_periods:
+      - July
+      - August
+    category_dynamics:
+      - Fertility/prenatal demand has a finite per-customer lifecycle (customers churn on conception/birth) partly offset by stage migration (preconception -> pregnancy -> postpartum) across the catalog.
+      - Subscription growth gradually smooths acquisition-driven volatility as the brand matures.
+
+source_systems:
+  confirmed:
+    - name: Shopify
+      confirmation_source: public_evidence
+      evidence_links:
+        - https://www.luminaryvitamins.com/products.json
+      evidence_notes: cdn.shopify/myshopify signatures and a live products.json catalog confirm Shopify.
+      domain: commerce
+      export_shape: standard connector schema
+      platform_resources:
+        - products
+        - orders
+        - customers
+        - order_items
+      join_keys:
+        - product_id
+        - variant_id
+        - order_id
+        - customer_id
+      schema_basis: official documentation
+      schema_notes: Subscriptions (Loop) are modeled via selling-plan data on line items; is_subscription is derived in staging, not an order-level boolean.
+      known_limitations:
+        - No separate Loop subscription extract in this phase; subscription state is represented through Shopify selling plans.
+    - name: Klaviyo
+      confirmation_source: user_confirmed
+      evidence_links:
+        - Ari (Elo Health) call notes, 2026-05-25
+        - https://www.luminaryvitamins.com/
+      evidence_notes: User-directed. On-site technology profiler was inconclusive because the brand loads martech through Shopify's web-pixel sandbox (no third-party pixel visible in static HTML). Call notes name Customer.io for email/CRM; the user chose to model Klaviyo. Conflict recorded.
+      domain: lifecycle
+      export_shape: events_api
+      platform_resources:
+        - email_events
+        - sms_events
+      join_keys:
+        - email
+        - profile_id
+      schema_basis: official documentation
+      schema_notes: Single event-per-row stream (klaviyo_events.csv); metric_name names the action. Trim to 12 historic months.
+      known_limitations:
+        - Campaign system is user-stated, not profiler-confirmed (web-pixel sandbox). Customer.io is the contrary call-note signal.
+    - name: GA4
+      confirmation_source: public_evidence
+      evidence_links:
+        - https://www.luminaryvitamins.com/
+      evidence_notes: gtag / google_tag present in site HTML.
+      domain: web_analytics
+      export_shape: reporting_api
+      platform_resources:
+        - purchase_events
+        - purchase_items
+      join_keys:
+        - transactionId
+      schema_basis: official documentation
+      schema_notes: Use the reporting/Data API schema, not BigQuery export. Paid Search channel appears only from 2026-05-25.
+      known_limitations:
+        - A realistic unattributed baseline and partial purchase-event coverage are modeled.
+    - name: Meta Ads
+      confirmation_source: call_note_confirmed
+      evidence_links:
+        - Ari (Elo Health) call notes, 2026-05-25
+      evidence_notes: Notes identify Meta as a primary live paid channel and a "start here" integration priority.
+      domain: paid_media
+      export_shape: insights_api
+      platform_resources:
+        - ad_insights
+        - ad_creatives
+      join_keys:
+        - campaign_id
+        - adset_id
+        - ad_id
+      schema_basis: official documentation
+      schema_notes: Daily ad-level insights (level=ad, time_increment=1) rolling up to adset/campaign; creatives joined on ad_id. Full window.
+      known_limitations:
+        - Aggregate performance fact; no join to individual commerce orders.
+    - name: Google Ads
+      confirmation_source: call_note_confirmed
+      evidence_links:
+        - Ari (Elo Health) call notes, 2026-05-25
+      evidence_notes: Notes describe a Google Ads keyword block ("sperm") being unblocked with L Catterton's help. Assumed live from the week of 2026-05-25.
+      domain: paid_media
+      export_shape: googleads_api
+      platform_resources:
+        - campaign_performance
+      join_keys:
+        - campaign_id
+      schema_basis: official documentation
+      schema_notes: Daily campaign-level GAQL performance. Future-only window (2026-05-25 -> 2026-11-30); zero historic rows by design.
+      known_limitations:
+        - No historic data; this is the realistic "newly unblocked" structural feature.
+  open_questions:
+    - Campaign system: Klaviyo (modeled) vs Customer.io (call notes). Unresolved; confirm with Ari or via Shopify installed-apps.
+    - Amazon (Marketing Stream / Seller Central / third API) deferred due to complexity; excluded from this phase.
+    - Exact subscribe & save discount and shipping terms are assumptions pending client confirmation.
+
+standardization:
+  canonical_tables:
+    - users
+    - orders
+  mapping_notes:
+    - No stage or analytics outputs until raw source outputs are generated, validated, and reviewed.
+    - Google Ads + Meta clean into the shared ad_performance metric vocabulary for a unified paid-performance view.
+
+data_issues:
+  selected:
+    - issue: Email casing or whitespace drift
+      severity: low
+      expected_prevalence: 1-3% of Shopify and Klaviyo email records
+      check: email_casing_or_whitespace_drift
+      expected_prevalence_range: [0.01, 0.03]
+      affected_systems:
+        - Shopify
+        - Klaviyo
+      visibility: subtle
+      rationale: Common identity-normalization issue across commerce and email systems.
+      notes: Lower/trim normalization reconciles it in staging.
+    - issue: Duplicate-looking operational rows
+      severity: low
+      expected_prevalence: Less than 0.5% of orders
+      check: near_duplicate_orders
+      expected_prevalence_range: [0.0005, 0.005]
+      affected_systems:
+        - Shopify
+        - Zendesk
+      visibility: subtle
+      rationale: Light operational mess (duplicate-looking order names; underlying id stays unique) improves realism.
+      notes: Keep sparse and platform-appropriate.
+    - issue: Guest vs account identity fragmentation
+      severity: medium
+      expected_prevalence: 1-2% of customers
+      affected_systems:
+        - Shopify
+        - Klaviyo
+        - GA4
+      visibility: subtle
+      rationale: Believable across DTC commerce and email joins (guest checkout vs account, email-only Klaviyo profiles).
+      notes: MANUAL. Signature - some Klaviyo profiles and GA4 users require fallback email matching rather than a clean key join.
+    - issue: GA4 covers only web-checkout orders (subscription renewals bypass the pixel)
+      severity: high
+      expected_prevalence: ~46% of orders absent from GA4 — ~90% of subscription renewals plus ~7% web tag/consent loss
+      affected_systems:
+        - GA4
+      visibility: subtle
+      rationale: Recurring subscription orders are created server-side (Loop/Shopify subscription contracts) with no web session, so they never fire the GA4 web purchase event. First orders and one-time repeats are real web checkouts (~93% captured). The few renewals that do appear carry Direct/(not set), never a paid channel. This is structural and a key pitch insight - GA4 alone understates retention/LTV and would over-credit paid acquisition if renewals were attributed.
+      notes: MANUAL. Signature - GA4 covers ~93% of first/one-time orders but ~10% of renewals; renewal events carry Direct/(not set) only. Count orders missing from ga4_reporting_purchase_events.transactionId split by renewal status.
+    - issue: Non-uniform channel mix with unattributed baseline
+      severity: low
+      expected_prevalence: Baseline ~8-10% unattributed; Paid Search absent before 2026-05-25
+      affected_systems:
+        - GA4
+      visibility: subtle
+      rationale: Channel mix should be realistically skewed (Meta/paid social heavy, paid search only post-unblock), not uniform.
+      notes: MANUAL. See references/channel-mix-benchmarks.md. Do not stack multiple unattributed code paths.
+    - issue: Promo-acquired cohort quality shift
+      severity: medium
+      expected_prevalence: Concentrated in welcome-offer cohorts
+      affected_systems:
+        - Shopify
+        - GA4
+      visibility: hidden_until_standardization
+      rationale: Welcome-offer first orders show lower AOV and different repeat behavior than baseline cohorts.
+      notes: MANUAL. Useful for the retention/quality narrative.
+    - issue: Enum and status drift
+      severity: low
+      expected_prevalence: Low scattered prevalence across Klaviyo and Zendesk
+      affected_systems:
+        - Klaviyo
+        - Zendesk
+      visibility: subtle
+      rationale: Realistic export inconsistency (mixed casing/status variants) without overwhelming the data.
+      notes: MANUAL. Collapsed by enum_casing_drift in staging only where genuine drift exists.
+
+execution_plan:
+  approval_status: approved
+  current_phase: source_generation
+  scope_summary: Generate raw source-shaped datasets for Luminary Vitamins using a products-first dependency model over an 18 historic + 6 future window, with Klaviyo trimmed to 12 historic months and Google Ads future-only (2026-05-25 onward). No operational scaling required.
+  approved_time_window:
+    historic_months: 18
+    future_months: 6
+    override_reason: Default window; no reduction needed (projected ~1.6M rows < 5M threshold).
+  catalog_and_promotion_summary: Ground products to the live $89 catalog and $178 bundle; model first-order welcome offers and ~15% subscribe & save with blanket free US shipping; carry promo mechanics into historical and future order behavior.
+  metric_assumptions_summary: Conservative scale - current run-rate ~$5.6M (May 2026) growing toward ~$7.8M (Nov 2026), below the $10M target. Subscription share rises from ~22% to ~40%; refunds ~4.0-4.5%.
+  volume_summary: Projected ~1.6M raw rows, under the 5M threshold. Klaviyo (largest table) capped by a 12-month source window. Products protected from any scaling.
+  generation_sequence:
+    - step: generate_products
+      depends_on: []
+    - step: generate_orders
+      depends_on:
+        - generate_products
+    - step: generate_customers
+      depends_on:
+        - generate_orders
+        - generate_products
+    - step: generate_dependent_datasets
+      depends_on:
+        - generate_products
+        - generate_orders
+        - generate_customers
+  parallel_groups:
+    - name: downstream_raw_sources
+      members:
+        - shopify_order_items
+        - ga4
+        - klaviyo
+        - meta_ads
+        - google_ads
+        - zendesk
+      depends_on:
+        - generate_orders
+        - generate_customers
+        - generate_products
+  phase_gates:
+    - phase: source_generation
+      approval_required_before_next: true
+    - phase: stage_standardization
+      approval_required_before_next: true
+    - phase: analytics_generation
+      approval_required_before_next: false
+  consistency_checks:
+    - foreign_key_reconciliation
+    - timestamp_plausibility
+    - cross_system_entity_coverage
+  validation_tests:
+    - name: primary_key_uniqueness
+      threshold:
+        max_duplicates: 0
+    - name: foreign_key_reconciliation
+      threshold:
+        max_orphans: 0
+    - name: ga4_order_timestamp_alignment
+      threshold: 30_minutes
+    - name: modeling_window_bounds
+      threshold:
+        historic_months: 18
+        future_months: 6
+        window_start: 2024-12-01
+        window_end: 2026-11-30
+    - name: source_specific_window_bounds
+      threshold:
+        klaviyo_historic_months: 12
+        google_ads_historic_months: 0
+        earliest_by_file:
+          klaviyo_events.csv: 2025-06-01
+          meta_ads_insights.csv: 2024-12-01
+          google_ads_campaign_performance.csv: 2026-05-25
+    - name: promotion_and_discount_consistency
+      threshold:
+        note: Monthly volume targets are promo-inclusive; validate promo effects on AOV/mix, not on monthly volume. See references/metric-definitions.md.
+    - name: metric_trajectory_alignment
+      threshold:
+        orders_pct: 4
+        revenue_pct: 6
+        aov_pct: 4
+  accepted_waivers: []
+  open_questions:
+    - Confirm campaign system (Klaviyo vs Customer.io) before stage/analytics delivery.
+
+generation:
+  company_slug: luminary
+  output_workspace: ../synthetic_data
+  raw_extracts_to_build:
+    - shopify_products.csv
+    - shopify_orders.csv
+    - shopify_customers.csv
+    - shopify_order_items.csv
+    - ga4_reporting_purchase_events.csv
+    - ga4_reporting_purchase_items.csv
+    - klaviyo_events.csv
+    - meta_ads_insights.csv
+    - meta_ad_creatives.csv
+    - google_ads_campaign_performance.csv
+    - zendesk_tickets.csv
+  stage_outputs:
+    - users.csv
+    - orders.csv
+  analytics_outputs:
+    - monthly_cohort_retention.csv

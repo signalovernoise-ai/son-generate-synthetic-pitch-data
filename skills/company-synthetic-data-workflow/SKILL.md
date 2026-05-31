@@ -63,7 +63,7 @@ Before generating any data, define the expected shape of the business over time,
    - assumed annual revenue level and annualized growth rates
    - monthly revenue path across the approved window
    - monthly order-volume path across the approved window
-   - seasonality pattern with explicit monthly multipliers or directional lifts/drops
+   - seasonality pattern with explicit monthly multipliers, plus an explicit statement of whether seasonality is applied as a separate multiplier layer or baked into the monthly volume path — do not record multipliers in the setup artifact that the generator does not actually apply
    - AOV level and how it changes over time
    - new versus repeat mix over time
    - refund-rate pattern over time
@@ -105,7 +105,7 @@ The plan must include:
    - current catalog and pricing evidence
    - promotion and discount assumptions grounded in current site evidence
    - delivery-pricing assumptions, including the free-delivery threshold if one exists
-   - quantified pre-generation metric assumptions and trajectories
+   - quantified pre-generation metric assumptions and trajectories, shown in the approval message itself as an explicit month-by-month table (revenue, orders, AOV, and the seasonality multiplier or note per month) — not only inside the setup artifact, so the user can review and challenge the actual numbers
    - explicit annual revenue assumptions, annual growth rates, retention levels, AOV levels, refund rates, and the expected effect of promos or seasonality on those metrics
    - confirmed source systems and evidence
    - source schemas to use
@@ -139,6 +139,7 @@ Read `references/standard-analytics-schemas/index.md` when planning derived anal
 Do not generate stage or analytics outputs until the raw source datasets have been generated, validated, reviewed, and accepted by the user.
 
 10. Generate data in the external workspace using dependency-aware sequencing.
+Read `references/generator-contract.md` before writing or extending a company's `generate_raw.py`. It is the authoring contract — structure, conventions, shared helpers, AOV calibration, and the cross-system consistency rules (including that subscription renewals bypass web analytics). Follow it rather than reverse-engineering the previous company's generator.
 Keep generated CSVs outside the repo. The Python modules in `synthetic_pitch_data` should read and write in the external `synthetic_data/data/...` tree.
 Generate in this order unless the user approves a different dependency model:
    - first generate products using the observed current catalog as the present-day anchor plus a sensible historic and future tail where needed
@@ -205,16 +206,21 @@ RETENTION_AS_OF_DATE=<as_of> python3 -m synthetic_pitch_data.monthly_cohort_rete
 
 Retention is computed as of a date and ignores future-dated orders. Validate analytics against the documented trajectory (retention checkpoints, etc.) before delivering.
 
+15. Run a retrospective before considering the engagement done.
+Read `references/retrospective.md` and reconcile what actually happened against this skill while the session context is still available: steps skipped, reference docs inferred instead of read, deviations, techniques or modeling rules used that aren't yet in the skill, estimates that drifted from realized, and anything the user had to catch. Apply the clear wins directly (a new reference note, a tightened step, a new `validate_raw` check) and list larger ones as proposals. A finding that produces no change to the skill, a reference doc, or the validator was not really actioned. If nothing meaningful diverged, say so in one line.
+
 ## Files to read when needed
 
 - `references/setup-checklist.md`: step-by-step setup and research checklist
 - `references/metric-definitions.md`: how every metric is computed (AOV/revenue conventions, promo-inclusive volume, scaling)
 - `references/channel-mix-benchmarks.md`: realistic D2C channel mix, unattributed baseline, and attribution-coverage modelling
 - `references/data-issues-menu.md`: menu of common real-world data issues
+- `references/generator-contract.md`: authoring contract for a company `generate_raw.py` — structure, conventions, shared helpers, AOV calibration, cross-system consistency rules
 - `references/stage-cleaning.md`: how raw extracts are cleaned/standardized into stage tables, the detector battery, and how to extend it
 - `references/standard-source-schemas/index.md`: platform-specific source extract schemas
 - `references/standard-stage-schemas/index.md`: canonical stage schemas and mapping guidance
 - `references/standard-analytics-schemas/index.md`: canonical analytics schemas derived from stage data
+- `references/retrospective.md`: closing reconciliation of the run against this skill, and how to feed gaps back in
 
 ## Repo commands
 

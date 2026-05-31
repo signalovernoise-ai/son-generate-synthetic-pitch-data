@@ -116,7 +116,7 @@ Before any generation work begins, present a plan for user approval that covers:
 - any reduced time windows for large source systems and why they are acceptable
 - current catalog, pricing, and promotion evidence
 - delivery-pricing evidence and free-delivery threshold assumptions
-- proposed quantified growth, seasonality, AOV, retention, refund, and mix trajectories before generation
+- proposed quantified growth, seasonality, AOV, retention, refund, and mix trajectories before generation, shown in the approval message as an explicit month-by-month table (revenue, orders, AOV, and the seasonality multiplier or note per month) — not only in the setup artifact. State whether seasonality is a separate multiplier layer or baked into the monthly volume path, and do not record multipliers the generator will not apply
 - explicit annual revenue assumptions, annual growth rates, and the expected effect of promos or seasonality on key metrics
 - confirmed systems and supporting evidence
 - source schemas to use
