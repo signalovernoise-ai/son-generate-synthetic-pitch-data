@@ -22,9 +22,16 @@ knowledge); knowing what was *injected* is not.
   cleaners apply unchanged. Derived canonical fields: `net_sale_price` (refund-netted)
   on orders, `is_subscription` (selling-plan presence) on order items.
 - **Non-commerce systems — clean within their own standard source schema.** GA4,
-  Bloomreach, Zendesk, OrderGroove, Triple Whale are not orders; each is cleaned and
-  standardized in its own documented shape (see `standard-source-schemas/`). They are
+  Bloomreach, Klaviyo, Zendesk, OrderGroove, Triple Whale are not orders; each is cleaned
+  and standardized in its own documented shape (see `standard-source-schemas/`). They are
   not forced into the Shopify shape.
+- **Ad platforms (Google Ads, Meta) — clean within their own shape, then conform to a
+  shared `ad_performance` metric vocabulary.** Each platform stays faithful to its API
+  (Google's dotted GAQL fields + `cost_micros`; Meta's `actions`/`action_values` arrays),
+  and its cleaner derives canonical columns (`date`, `platform`, `account_id`,
+  `campaign_id`, `impressions`, `clicks`, `spend`, `conversions`, `conversion_value`) so the
+  cleaned tables can be unioned into one cross-platform performance view. They are aggregate
+  daily facts and do not join to the commerce spine.
 
 Metric conventions (net-of-discount, VAT-inclusive, etc.) follow `metric-definitions.md`.
 

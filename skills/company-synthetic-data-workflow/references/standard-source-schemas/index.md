@@ -11,6 +11,8 @@ Read the file for the relevant source system:
 - `ga4-reporting-api.md`
 - `bloomreach.md`
 - `klaviyo.md`
+- `google-ads.md`
+- `meta-ads.md`
 - `triple-whale.md`
 - `ordergroove.md`
 - `custom-postgres.md`

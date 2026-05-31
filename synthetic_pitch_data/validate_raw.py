@@ -90,6 +90,12 @@ RAW_SCHEMA: dict[str, dict] = {
         "channel_col": "channel",
         "fks": [("order_id", "orders", "id")],
     },
+    # --- Ad platforms (platform-reported daily performance) -------------
+    # Aggregate facts keyed by (date + ad object); no FK to the commerce spine.
+    # Composite natural keys (date+object id) — no single-column pk to assert.
+    "google_ads_campaign_performance.csv": {"role": "ad_performance", "ts": "segments.date"},
+    "meta_ads_insights.csv": {"role": "ad_performance", "ts": "date_start"},
+    "meta_ad_creatives.csv": {"role": "ad_creative", "pk": "ad_id"},
     # --- OrderGroove ----------------------------------------------------
     "ordergroove_subscriptions.csv": {"role": "subscriptions", "pk": "publicId"},
     "ordergroove_subscription_orders.csv": {"role": "subscription_orders", "pk": "publicId"},
