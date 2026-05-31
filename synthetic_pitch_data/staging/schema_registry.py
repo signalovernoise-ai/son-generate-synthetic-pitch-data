@@ -10,6 +10,7 @@ from .datasets import (
     bloomreach_campaign_events,
     ga4_purchase_events,
     ga4_purchase_items,
+    klaviyo_events,
     ordergroove_events,
     ordergroove_subscription_orders,
     ordergroove_subscriptions,
@@ -36,5 +37,6 @@ STAGE_SPECS = [
     ordergroove_subscription_orders.SPEC,
     ordergroove_events.SPEC,
     bloomreach_campaign_events.SPEC,
+    klaviyo_events.SPEC,
     zendesk_tickets.SPEC,
 ]

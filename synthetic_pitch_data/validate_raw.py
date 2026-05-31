@@ -95,6 +95,7 @@ RAW_SCHEMA: dict[str, dict] = {
     "ordergroove_subscription_orders.csv": {"role": "subscription_orders", "pk": "publicId"},
     # --- CRM / support --------------------------------------------------
     "bloomreach_campaign_events.csv": {"role": "crm_events", "ts": "timestamp"},
+    "klaviyo_events.csv": {"role": "crm_events", "pk": "event_id", "ts": "timestamp"},
     "zendesk_tickets.csv": {"role": "support_tickets", "pk": "id", "ts": "created_at"},
     # --- Custom Postgres ------------------------------------------------
     "user.csv": {"role": "customers", "pk": "user_id", "email_col": "email"},

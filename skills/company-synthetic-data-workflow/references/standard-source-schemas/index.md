@@ -10,6 +10,7 @@ Read the file for the relevant source system:
 - `zendesk.md`
 - `ga4-reporting-api.md`
 - `bloomreach.md`
+- `klaviyo.md`
 - `triple-whale.md`
 - `ordergroove.md`
 - `custom-postgres.md`

@@ -27,6 +27,7 @@ Browse the web for current signals and capture the source links:
 - Company filings and credible reporting on revenue, growth, customer trends, or market expansion
 - Job descriptions mentioning systems or data tools
 - App-store, partner, or vendor directory evidence
+- Website technology-profiler scan (BuiltWith / Wappalyzer / on-site script tags, DNS and email headers) — run this as a standard step for every client to detect the real martech, analytics, subscription, and CRM/ESP stack, particularly the email/SMS campaign system
 - Category seasonality and promotional windows
 - Retail presence versus pure D2C
 
@@ -95,8 +96,8 @@ Record the estimated row counts and the reason for any proposed reduction in the
 For each source system capture:
 
 - System name
-- Confirmation source: public evidence, user-confirmed, or call-note confirmed
-- Evidence link or note
+- Confirmation source: technology-profiler detection, public evidence, user-confirmed, or call-note confirmed
+- Evidence link or note (include the technology-profiler result, and note any conflict between it and call notes / user belief for the user to resolve)
 - Data domain: commerce, CRM, lifecycle, support, ads, web analytics, finance, warehouse
 - Export shape: standard connector schema, vendor export, custom tables
 - Platform resource scope: orders, customers, order items, products, tickets, events, campaigns, etc.

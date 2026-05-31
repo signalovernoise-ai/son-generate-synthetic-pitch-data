@@ -47,6 +47,7 @@ Browse for current information on:
    - press releases, investor updates, company filings, and credible reporting that mention revenue, growth, customer trends, or category expansion
    - source systems, vendors, or job-posting evidence of tooling
    - notable retention or acquisition dynamics in the category
+As a standard step for every client, run a website technology-profiler check (e.g. BuiltWith, Wappalyzer, or the brand's on-site JavaScript/script tags and DNS/email headers) to detect the actual martech, analytics, subscription, and CRM/ESP stack in use. Treat this as the default first pass for source-system evidence — especially for the campaign/email-SMS system (Klaviyo vs Bloomreach vs Customer.io, etc.), where category norms are a weak signal and the live site usually reveals the truth. Record what the profiler detects (and what it does not) in the setup artifact, and reconcile it explicitly against any call-note or user-stated tooling.
 Use exact dates when referencing current facts.
 Use the exact current product names and prices visible on the company site when building the products table.
 You may add a small number of sensible delisted or historic products, but they should remain adjacent to the current catalog rather than invented from scratch.
@@ -89,9 +90,11 @@ Do not silently shrink the dataset. Put the proposed reduction into the approval
 6. Confirm source systems with evidence.
 Only include source systems that are backed by one of:
    - public evidence such as vendor directories, job postings, engineering writeups, or exposed trackers
+   - a website technology-profiler result (BuiltWith / Wappalyzer / on-site script and header inspection) — run this as standard for every client
    - direct user confirmation
    - notes from discovery or sales calls provided by the user
 Record the evidence for each system in the setup artifact.
+When a profiler result and a call note or user belief disagree on a system (e.g. the site shows Klaviyo but notes say Customer.io), surface the conflict in the plan and let the user resolve it rather than silently picking one.
 If a system is plausible but unconfirmed, leave it out of generation and list it as an open question instead.
 
 7. Present an execution plan and wait for approval.
