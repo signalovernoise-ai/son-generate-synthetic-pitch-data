@@ -59,6 +59,38 @@ If a future company instead wants monthly targets to be *pre-promo baselines* th
 above, state that explicitly in the setup yaml `execution_plan` and override this convention
 there.
 
+## The order-mix identity (check this before generating)
+
+New/repeat share, subscription share and the retention curve are **not independent** — they
+are three views of the same order population. Quoting them from intuition produces a set that
+cannot be generated. Before writing any targets into the setup yaml, check they solve:
+
+```
+1 = new_share × (1 + take_rate × renewals_per_subscriber) + adhoc_repeat_share
+subscription_order_share = new_share × take_rate × (renewals_per_subscriber + 1)
+repeat_order_share       = 1 − new_share
+retention(first renewal) ≈ take_rate × first-renewal survival + adhoc floor
+```
+
+where `take_rate` is the share of first orders that start a subscription and
+`renewals_per_subscriber` is the sum of cumulative survival across renewal cycles.
+
+If the identity does not balance, renewal *demand* will exceed the renewal *capacity* the
+monthly order targets leave free, the generator will skip renewals every month to hit its
+counts, and the retention curve will come out flatter and smeared versus the documented
+checkpoints. Fix the assumptions, not the generator.
+
+## Retention: two definitions, do not mix them
+
+- **Calendar-month offset** — cohort month vs order month. What most brands mean by "month 1".
+- **Elapsed 30-day buckets** from the exact first-order timestamp. What
+  `monthly_cohort_retention` computes, and what most warehouse implementations do.
+
+For a subscription brand on a fixed cadence the two differ materially: a renewal ~30 days
+after the first order lands in bucket 0 or 1 depending on a few days of jitter, and bucket 0
+is discarded, so the elapsed-days curve reads systematically lower at every cadence peak.
+State which definition a documented checkpoint uses, and never put both in one chart.
+
 ## Scaling
 
 When operational row counts are scaled (`volume_plan.reduction_actions.row_volume_scaling_factor`),

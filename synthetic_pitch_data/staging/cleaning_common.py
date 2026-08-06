@@ -318,12 +318,17 @@ def render_cleaning_notes(company: str, reports: list[StageReport], extra_sectio
     )
     lines.append("")
     for r in reports:
-        retained = sum(f.found for f in r.findings if f.action == "removed")
+        # Count rows actually dropped, not the sum of detector hits: a row can trip more
+        # than one filter (a £0 test order is both test_internal_rows and
+        # implausible_amount), and summing findings overstates the removal.
+        removed = r.input_rows - r.output_rows
+        flagged = sum(f.found for f in r.findings if f.action == "removed")
+        overlap = "" if flagged == removed else f"; {flagged:,} detector hits across overlapping filters"
         lines.append(f"## {r.dataset}")
         lines.append("")
         lines.append(f"Source: `{r.source_file}`  ")
         lines.append(f"Rows: {r.input_rows:,} in → {r.output_rows:,} staged "
-                     f"({retained:,} removed).")
+                     f"({removed:,} removed{overlap}).")
         lines.append("")
         if r.findings:
             lines.append("Detected and handled:")

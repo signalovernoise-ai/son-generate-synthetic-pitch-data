@@ -433,18 +433,25 @@ research:
     # pre-generation guess: the first draft's checkpoints could not be reconciled with the
     # documented new/repeat and subscription mix and were corrected here.
     retention_checkpoints:
-      m1: 0.34
-      m3: 0.12
-      m6: 0.09
-      m12: 0.05
+      m1: 0.337
+      m3: 0.117
+      m6: 0.089
+      m12: 0.053
     retention_cadence_months:
-      m4: 0.27
-      m7: 0.22
-      m10: 0.16
-      m13: 0.11
+      m4: 0.272
+      m7: 0.216
+      m10: 0.156
+      m13: 0.105
     retention_shape_notes:
       - Non-cadence months carry a decaying one-time-repeat floor of ~0.024 -> ~0.018.
       - A secondary bump at m3 / m6 / m9 (0.12 / 0.09 / 0.07) comes from renewals rescheduled a month early or late, which is genuine Recharge skip/delay behaviour rather than noise.
+      - >
+        Two definitions give two curves and both are correct. The checkpoints above use a
+        CALENDAR-MONTH offset. The monthly_cohort_retention analytics output buckets by
+        ELAPSED 30-DAY PERIODS from the exact first-order timestamp, which splits the ~30-day
+        first refill delivery across buckets 0 and 1 and discards bucket 0 — so it reads lower:
+        m1 0.214, m4 0.215, m7 0.178, m10 0.131, m13 0.086, with troughs of 0.02-0.04 between.
+        Quote whichever definition the audience expects, but never mix them in one chart.
     new_vs_repeat_mix_by_period:
       - period: 2025-H2
         new_share: 0.32
@@ -771,7 +778,7 @@ data_issues:
 
 execution_plan:
   approval_status: approved
-  current_phase: source_generation
+  current_phase: analytics_generation
   scope_summary: >
     Generate raw source-shaped datasets for the Fussy D2C store using a products-first dependency
     model over an 18 historic + 6 future month window (2025-03-01 -> 2027-02-28), UK-only and GBP,
@@ -896,4 +903,12 @@ generation:
     - users.csv
     - orders.csv
   analytics_outputs:
-    - monthly_cohort_retention.csv
+    - monthly_cohort_retention.csv   # built 2026-08-06 with RETENTION_AS_OF_DATE=2026-08-06
+  stage_notes: >
+    run_staging discovered every modelled defect by profiling alone: 888 test/internal orders
+    removed (tripping both test_internal_rows and implausible_amount), 3,282 duplicate display
+    ids flagged and retained, 4,019 Shopify and 14,886 Klaviyo emails normalised, 506 Gorgias
+    tag values collapsed for casing drift, 2,342 dunning retries flagged, 573 charges orphaned
+    onto removed test orders, and 4,329 support tickets flagged as unlinkable to commerce.
+    Cross-system coverage reports 48.7% of in-window orders absent from GA4 — the headline
+    finding, reached without any knowledge of how the data was produced.

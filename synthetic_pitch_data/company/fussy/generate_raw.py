@@ -158,6 +158,25 @@ def random_timestamp_after(rng: np.random.Generator, month_key: str, after: pd.T
     return start + pd.Timedelta(seconds=int(rng.integers(0, seconds + 1)))
 
 
+def renewal_timestamp(rng, month_key: str, anchor: pd.Timestamp, gap_months: int, not_before: pd.Timestamp) -> pd.Timestamp:
+    """Place a recurring charge on its scheduled anniversary, not at a random point in the
+    month.
+
+    Recharge bills a fixed number of days after the previous charge, so inter-order gaps
+    cluster tightly around 30 / 91 days. Scattering renewals uniformly across the target
+    calendar month would widen those gaps enough to smear the cohort-retention sawtooth
+    once retention is bucketed by elapsed days rather than by calendar month.
+    """
+    target = anchor + pd.Timedelta(days=30.44 * gap_months) + pd.Timedelta(
+        seconds=int(rng.integers(-3 * 86400, 3 * 86400))
+    )
+    lo = max(month_start(month_key), not_before)
+    hi = month_end(month_key) + pd.Timedelta(days=1) - pd.Timedelta(minutes=1)
+    if lo >= hi:
+        return hi
+    return min(max(target, lo), hi)
+
+
 def weighted_choice(rng, values, weights, size, replace=True):
     probs = np.array(weights, dtype=float)
     probs = probs / probs.sum()
@@ -452,6 +471,7 @@ def build_core_sources():
             "cancelled_at": None,
             "cancel_reason": "",
             "last_charge_ts": ts,
+            "last_charge_idx": midx,
             "lines": [{"item": refill, "qty": SUB_REFILL_QTY, "unit_price": SUB_REFILL_UNIT}],
             "crosssell": False,
         }
@@ -494,7 +514,12 @@ def build_core_sources():
         group = open_subscription(customer, created, -age_months, False, MONTH_KEYS[0])
         group["cycle"] = min(6, max(1, age_months // RENEWAL_GAP))
         group["next_idx"] = int(rng.integers(0, RENEWAL_GAP))
-        group["last_charge_ts"] = created + pd.Timedelta(days=int(age_months * 28))
+        # Anchor the schedule one full cycle before the next due charge so the first
+        # in-window renewal lands on a realistic ~91-day gap.
+        group["last_charge_idx"] = group["next_idx"] - RENEWAL_GAP
+        group["last_charge_ts"] = WINDOW_START_TS + pd.Timedelta(
+            days=30.44 * group["last_charge_idx"] + int(rng.integers(0, 28))
+        )
     for _ in range(legacy_buyers):
         created = WINDOW_START_TS - pd.Timedelta(days=int(rng.integers(30, 700)))
         customer = new_profile(created, promo_acquired=False, legacy=True)
@@ -535,7 +560,10 @@ def build_core_sources():
 
         for group in survivors:
             customer = profiles[group["customer_id"]]
-            ts = random_timestamp_after(rng, month_key, customer.created_at)
+            ts = renewal_timestamp(
+                rng, month_key, group["last_charge_ts"],
+                midx - group["last_charge_idx"], customer.created_at,
+            )
             if not group["crosssell"] and crosssell_rate and rng.random() < crosssell_rate:
                 extra = pick_from_roles(rng, month_key, CROSSSELL_ROLES)
                 group["lines"].append(
@@ -547,6 +575,7 @@ def build_core_sources():
             group["cycle"] += 1
             group["next_idx"] = midx + RENEWAL_GAP
             group["last_charge_ts"] = ts
+            group["last_charge_idx"] = midx
 
         # 2. One-time repeat purchases from past buyers.
         adhoc_count = min(adhoc_target, max(0, target_orders - len(survivors) - min_new))
@@ -725,7 +754,7 @@ def build_core_sources():
                 charge_rows.append(
                     {
                         "id": str(4400000 + chg),
-                        "subscription_id": str(2200000 + group["group_id"]),
+                        "subscription_id": f"{2200000 + group['group_id']}0",  # primary subscribed line
                         "customer_id": str(3300000 + group["group_id"]),
                         "shopify_customer_id": customer.customer_id,
                         "shopify_order_id": order_id,
@@ -753,7 +782,7 @@ def build_core_sources():
                     charge_rows.append(
                         {
                             "id": str(4400000 + chg),
-                            "subscription_id": str(2200000 + group["group_id"]),
+                            "subscription_id": f"{2200000 + group['group_id']}0",  # primary subscribed line
                             "customer_id": str(3300000 + group["group_id"]),
                             "shopify_customer_id": customer.customer_id,
                             "shopify_order_id": "",  # failed charge never created a Shopify order

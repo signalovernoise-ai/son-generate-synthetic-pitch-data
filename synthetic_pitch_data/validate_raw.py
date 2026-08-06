@@ -115,6 +115,7 @@ RAW_SCHEMA: dict[str, dict] = {
         "fks": [
             ("shopify_order_id", "orders", "id"),
             ("shopify_customer_id", "customers", "id"),
+            ("subscription_id", "subscriptions", "id"),
         ],
     },
     # --- CRM / support --------------------------------------------------
