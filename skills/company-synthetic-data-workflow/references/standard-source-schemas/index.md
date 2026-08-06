@@ -15,4 +15,12 @@ Read the file for the relevant source system:
 - `meta-ads.md`
 - `triple-whale.md`
 - `ordergroove.md`
+- `recharge.md`
+- `gorgias.md`
 - `custom-postgres.md`
+
+Pick **one** system per domain per company, backed by evidence:
+
+- subscriptions: `recharge.md` or `ordergroove.md`
+- campaign / lifecycle: `klaviyo.md` or `bloomreach.md`
+- support: `gorgias.md` or `zendesk.md`
