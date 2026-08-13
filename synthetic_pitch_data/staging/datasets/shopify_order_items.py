@@ -34,5 +34,20 @@ SPEC = DatasetSpec(
     required=["order_id", "line_item_id", "product_id"],
     lower_enum_cols=["fulfillment_status"],
     fks=[("order_id", "orders", "id"), ("product_id", "products", "product_id")],
+    # Line-economics profiling: separates non-merchandise lines (shipping protection,
+    # warranties), gift-with-purchase zero-value lines, and one-variant-many-prices
+    # dispersion. All flagged and retained so order totals still reconcile.
+    line_product_col="product_id",
+    line_variant_col="variant_id",
+    line_price_col="discounted_price",
+    line_list_price_col="price",
+    line_discount_col="total_discount",
+    requires_shipping_col="requires_shipping",
     post_hooks=[add_is_subscription],
+    static_notes=[
+        "is_merchandise excludes non-merchandise lines; use it before any per-SKU revenue, "
+        "attach-rate or units-sold analysis, or those figures include insurance/warranty upsells.",
+        "is_zero_value_line marks gift-with-purchase and lead-magnet lines. They are real "
+        "fulfilled lines, so they count toward units but not revenue.",
+    ],
 )

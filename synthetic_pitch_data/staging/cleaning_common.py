@@ -101,6 +101,14 @@ class DatasetSpec:
     status_col: str | None = None
     keep_statuses: set[str] | None = None
     near_dup_group: list[str] = field(default_factory=list)
+    # Line-economics profiling (order-item grain). Set these on a line-item spec to run the
+    # merchandise / zero-value / price-dispersion detectors.
+    line_product_col: str | None = None
+    line_variant_col: str | None = None
+    line_price_col: str | None = None       # net/sell price — drives zero-value + merchandise value
+    line_list_price_col: str | None = None  # list price — drives price-dispersion (NOT the net price)
+    line_discount_col: str | None = None
+    requires_shipping_col: str | None = None
     fks: list[tuple[str, str, str]] = field(default_factory=list)  # (col, parent_role, parent_key)
     provides_keys: list[str] = field(default_factory=list)         # cols children may FK to (parent side)
     field_map: dict[str, str] = field(default_factory=dict)        # source -> canonical
@@ -287,6 +295,98 @@ def duplicate_key(df, key, report) -> pd.Series:
     if n:
         report.record("duplicate_primary_key", n, "removed", f"{key} duplicates (kept first)")
     return drop
+
+
+def line_economics(df: pd.DataFrame, spec, report: StageReport) -> pd.DataFrame:
+    """Profile line-item economics and derive the flags revenue analysis needs.
+
+    Three things routinely sit in an order-items export that are not merchandise sales, and
+    every one of them silently corrupts per-SKU revenue, units-sold and discount-rate work.
+    All three are *flagged and retained* — they are real lines the customer really received,
+    so deleting them would break reconciliation to order totals. The point is to make them
+    separable.
+
+    1. `non_merchandise_line` — a product where no line requires shipping and the "variants"
+       are a price ladder rather than a product range (shipping protection, warranties,
+       donations, tips). Derives `is_merchandise`.
+    2. `zero_value_line` — a GBP 0.00 line on an otherwise-paid order: gift-with-purchase or
+       a lead magnet. Distinguished from an order where *every* line is zero, which is a
+       comp/test order and is handled by the test/implausible filters. Derives
+       `is_zero_value_line`.
+    3. `variant_price_dispersion` — one variant selling at several distinct list prices with
+       no discount recorded against them. That is the signature of on-site price testing or
+       an unlogged price change; only the client can say which, so it is surfaced, not fixed.
+    """
+    price_col, product_col = spec.line_price_col, spec.line_product_col
+    if not price_col or price_col not in df.columns:
+        return df
+    price = pd.to_numeric(df[price_col], errors="coerce")
+
+    # --- 1. non-merchandise lines ---
+    ship_col = spec.requires_shipping_col
+    if product_col in df.columns and ship_col and ship_col in df.columns:
+        requires = df[ship_col].astype("string").str.strip().str.lower().isin({"true", "1", "yes"})
+        by_product = requires.groupby(df[product_col]).mean()
+        non_merch_products = set(by_product[by_product == 0.0].index)
+        is_merch = ~df[product_col].isin(non_merch_products)
+        df["is_merchandise"] = is_merch
+        n = int((~is_merch).sum())
+        if n:
+            value = float(pd.to_numeric(df.loc[~is_merch, price_col], errors="coerce").sum())
+            report.record(
+                "non_merchandise_line", n, "flagged",
+                f"{len(non_merch_products)} product(s) where no line requires shipping and price "
+                f"varies as a ladder — worth {value:,.2f}; is_merchandise derived so per-SKU "
+                f"revenue can exclude them",
+            )
+
+    # --- 2. zero-value lines on otherwise-paid orders ---
+    key = spec.fks[0][0] if spec.fks else None
+    if key and key in df.columns:
+        is_zero = price.fillna(0) == 0
+        order_total = price.fillna(0).groupby(df[key]).transform("sum")
+        gwp = is_zero & (order_total > 0)
+        df["is_zero_value_line"] = gwp
+        n = int(gwp.sum())
+        if n:
+            fully_zero = int(df.loc[is_zero & (order_total == 0), key].nunique())
+            report.record(
+                "zero_value_line", n, "flagged",
+                f"GBP 0.00 lines on otherwise-paid orders (gift-with-purchase / lead magnet) "
+                f"across {int(df.loc[gwp, key].nunique()):,} orders; separately, {fully_zero:,} "
+                f"orders are zero on every line and are handled by the test/amount filters",
+            )
+
+    # --- 3. one variant, several LIST prices, no discount ---
+    # Measured on the list price, never the net price: the net price legitimately varies with
+    # every promotion, welcome offer and subscription discount, so using it would flag ordinary
+    # discounting as a price test. Dispersion in the *list* price with no discount recorded is
+    # the signature that actually distinguishes the two.
+    variant_col, disc_col = spec.line_variant_col, spec.line_discount_col
+    list_col = spec.line_list_price_col or spec.line_price_col
+    if variant_col and variant_col in df.columns and list_col in df.columns:
+        list_price = pd.to_numeric(df[list_col], errors="coerce")
+        nunique = list_price.groupby(df[variant_col]).transform("nunique")
+        modal = list_price.groupby(df[variant_col]).transform(
+            lambda s: s.mode().iloc[0] if len(s.mode()) else s.iloc[0]
+        )
+        off_modal = (nunique > 1) & (list_price != modal)
+        n = int(off_modal.sum())
+        if n:
+            variants = int(df.loc[off_modal, variant_col].nunique())
+            detail = (
+                f"{variants} variant(s) sell at more than one list price; {n:,} lines sit off the "
+                f"modal price"
+            )
+            if disc_col and disc_col in df.columns:
+                disc = pd.to_numeric(df[disc_col], errors="coerce").fillna(0)
+                undisc = int((off_modal & (disc == 0)).sum())
+                detail += (
+                    f", of which {undisc:,} carry no discount at all — consistent with on-site "
+                    f"price testing rather than promotion"
+                )
+            report.record("variant_price_dispersion", n, "flagged", detail)
+    return df
 
 
 def flag_duplicate_display_id(df, col, report) -> None:

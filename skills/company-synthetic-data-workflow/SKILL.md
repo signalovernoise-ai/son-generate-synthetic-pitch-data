@@ -47,6 +47,8 @@ Browse for current information on:
    - press releases, investor updates, company filings, and credible reporting that mention revenue, growth, customer trends, or category expansion
    - source systems, vendors, or job-posting evidence of tooling
    - notable retention or acquisition dynamics in the category
+   - whether the brand's peak trading windows run on a non-Gregorian calendar (Ramadan/Eid, Lunar New Year, Diwali) — read `references/seasonality-calendars.md` when they do, because those peaks migrate across Gregorian months and break year-on-year month comparison
+   - for UK private companies, Companies House filings — where accounts are filed without a profit and loss account, the corporation-tax creditor, the movement in retained earnings and closing stock still bound revenue (see `references/setup-checklist.md`)
 As a standard step for every client, run a website technology-profiler check (e.g. BuiltWith, Wappalyzer, or the brand's on-site JavaScript/script tags and DNS/email headers) to detect the actual martech, analytics, subscription, and CRM/ESP stack in use. Treat this as the default first pass for source-system evidence — especially for the campaign/email-SMS system (Klaviyo vs Bloomreach vs Customer.io, etc.), where category norms are a weak signal and the live site usually reveals the truth. Record what the profiler detects (and what it does not) in the setup artifact, and reconcile it explicitly against any call-note or user-stated tooling.
 Use exact dates when referencing current facts.
 Use the exact current product names and prices visible on the company site when building the products table.
@@ -94,8 +96,10 @@ Do not silently shrink the dataset. Put the proposed reduction into the approval
 Only include source systems that are backed by one of:
    - public evidence such as vendor directories, job postings, engineering writeups, or exposed trackers
    - a website technology-profiler result (BuiltWith / Wappalyzer / on-site script and header inspection) — run this as standard for every client
+   - a **public ad-library result** for paid-media systems (Meta Ad Library, TikTok Commercial Content Library), searchable by advertiser and region
    - direct user confirmation
    - notes from discovery or sales calls provided by the user
+**A missing pixel is not evidence of absence for paid media.** On Shopify, the Meta, TikTok and Google pixels run inside the server-side web-pixels sandbox, so `connect.facebook.net` / `analytics.tiktok.com` will not appear in the rendered page source even when the channel is the brand's largest. `webPixelsConfigList` lists installed app pixels but does not name them. Always check the ad libraries before excluding a paid-social channel — excluding a live channel understates acquisition far more than including a dormant one.
 Record the evidence for each system in the setup artifact.
 When a profiler result and a call note or user belief disagree on a system (e.g. the site shows Klaviyo but notes say Customer.io), surface the conflict in the plan and let the user resolve it rather than silently picking one.
 If a system is plausible but unconfirmed, leave it out of generation and list it as an open question instead.
@@ -217,6 +221,7 @@ Read `references/retrospective.md` and reconcile what actually happened against 
 - `references/setup-checklist.md`: step-by-step setup and research checklist
 - `references/metric-definitions.md`: how every metric is computed (AOV/revenue conventions, promo-inclusive volume, scaling)
 - `references/channel-mix-benchmarks.md`: realistic D2C channel mix, unattributed baseline, and attribution-coverage modelling
+- `references/seasonality-calendars.md`: non-Gregorian trading peaks (Ramadan/Eid, Lunar New Year, Diwali), why they migrate, and the mix and retention effects they cause
 - `references/data-issues-menu.md`: menu of common real-world data issues
 - `references/generator-contract.md`: authoring contract for a company `generate_raw.py` — structure, conventions, shared helpers, AOV calibration, cross-system consistency rules
 - `references/stage-cleaning.md`: how raw extracts are cleaned/standardized into stage tables, the detector battery, and how to extend it
