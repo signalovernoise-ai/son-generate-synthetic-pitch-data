@@ -24,6 +24,9 @@ from .datasets import (
     shopify_order_items,
     shopify_orders,
     shopify_products,
+    skio_subscription_orders,
+    skio_subscriptions,
+    tiktok_ads_insights,
     triplewhale_attributed_orders,
     triplewhale_journey_events,
     zendesk_tickets,
@@ -46,11 +49,15 @@ STAGE_SPECS = [
     # cleaned parent. A company runs one subscription platform, never both.
     recharge_subscriptions.SPEC,
     recharge_subscription_orders.SPEC,
+    # Skio: same ordering rule as Recharge — subscriptions before billing attempts.
+    skio_subscriptions.SPEC,
+    skio_subscription_orders.SPEC,
     bloomreach_campaign_events.SPEC,
     klaviyo_events.SPEC,
     google_ads_campaign_performance.SPEC,
     meta_ads_insights.SPEC,
     meta_ad_creatives.SPEC,
+    tiktok_ads_insights.SPEC,
     zendesk_tickets.SPEC,
     gorgias_tickets.SPEC,
 ]

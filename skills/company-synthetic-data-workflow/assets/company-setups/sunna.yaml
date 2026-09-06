@@ -1,0 +1,1270 @@
+company:
+  name: Sunna Supplements
+  website: https://sunnasupplements.com/
+  generated_on: 2026-08-13
+  time_window:
+    historic_months: 18
+    future_months: 6
+    override_reason: Using the default 18 historic + 6 future window (2025-03-01 -> 2027-02-28). The brand incorporated 2022-08-16 and was already trading, so the window start does not predate launch. 18 months is required rather than 12 because the window must contain two full Ramadan trading peaks (Mar 2025 and Feb/Mar 2026) for the Islamic-calendar seasonality story to be visible at all; a 12-month cut would leave only one.
+  primary_market: UK
+  currency: GBP
+  category: Health and wellness
+  subcategory: Halal-certified supplements (collagen, vitamins, minerals, electrolytes, sports nutrition)
+  business_model: Paid-social-led D2C supplements on Shopify, one-time purchase dominant with a Skio Subscribe & Save subscription layer and multi-month supply bundles
+  confidence_note: >
+    Catalog, prices, variant structure and launch dates are grounded in the live Shopify storefront
+    (products.json pulled 2026-08-13; 32 products). Source systems are grounded in a technology-profiler
+    pass over the rendered UK homepage, contact page and a PDP on 2026-08-13, plus the Meta Ad Library
+    (GB) and the TikTok Commercial Content Library (GB), both checked 2026-08-13. Commercial scale is
+    DERIVED, not published: Companies House accounts to 31 Dec 2024 were filed without a profit and loss
+    account, so revenue is inferred from the corporation-tax creditor (GBP 148,487), the movement in
+    retained earnings (GBP 37,036 -> GBP 347,027) and closing stock (GBP 292,652). See
+    research.commercial_assumptions.scale_note. Growth from that base is an estimate, not evidence.
+    No support/helpdesk system could be detected — see execution_plan.open_questions.
+
+source_time_windows:
+  default:
+    historic_months: 18
+    future_months: 6
+  overrides:
+    - system_name: Klaviyo
+      historic_months: 12
+      future_months: 6
+      rationale: Trim the email/SMS event stream to the last 12 historic months (from 2025-09-01) to control row volume while preserving the lifecycle story. Anchored to customers and orders.
+      anchor_to_tables:
+        - customers
+        - orders
+
+volume_plan:
+  # REALIZED counts from the build of 2026-08-13 (estimates in brackets where they differed).
+  estimated_raw_rows:
+    products: 82                  # 82 variant rows across 33 products (est 100)
+    orders: 562900
+    customers: 363585             # incl. 68,250 pre-window legacy customers (est 380000)
+    order_items: 822251           # 1.46 lines/order — gift and Navidium lines lift it above 1
+    crm_events: 1077576           # klaviyo_events.csv, 12 historic + 6 future months (est 700000)
+    ga4_events: 400816            # web checkouts only; Skio renewals bypass the pixel
+    ga4_event_items: 639732
+    subscriptions: 75022          # skio_subscriptions.csv (est 62000)
+    subscription_orders: 198568   # skio_subscription_orders.csv (billing attempts)
+    ad_performance_google: 7802   # google_ads_campaign_performance.csv
+    ad_performance_meta: 11646    # meta_ads_insights.csv, 110 ads on flighted schedules
+    ad_creatives_meta: 110        # meta_ad_creatives.csv, one row per ad (est 900)
+    ad_performance_tiktok: 10448  # tiktok_ads_insights.csv, 200 ads on short flights
+    support_tickets: 14041        # gorgias_tickets.csv, 2.5% of orders
+    total: 4194579                # vs 3.69m estimated; still comfortably under the 5m threshold
+  threshold_total_raw_rows: 5000000
+  protected_dimensions:
+    - products
+  reduction_actions:
+    reduce_historic_window_to_months:
+    row_volume_scaling_factor: 1.0
+    rationale: >
+      The full-scale build projects ~3.69m raw rows, below the 5m threshold, so neither the window cut
+      nor operational row scaling is required and both are left off. Products are recorded as a
+      protected dimension anyway so that any later decision to scale cannot shrink the catalog. If the
+      user prefers a faster build, the fallback is row_volume_scaling_factor 0.5 (~1.85m rows); rates
+      (AOV, refund rate, subscription share, retention) are scale-invariant and volume/revenue targets
+      would then be compared at target x 0.5.
+
+research:
+  sources:
+    - https://sunnasupplements.com/
+    - https://sunnasupplements.com/products.json (32 products, pulled 2026-08-13)
+    - https://sunnasupplements.com/products/halal-collagen-protein (Skio selling_plan_groups, 10% and 20% Subscribe & Save)
+    - https://sunnasupplements.com/policies/shipping-policy
+    - https://sunnasupplements.com/pages/contact
+    - https://us.sunnasupplements.com/ (separate US Shopify store, shop id 0854/6612/0457)
+    - https://find-and-update.company-information.service.gov.uk/company/14298073 (SUNNA SUPPLEMENTS LTD)
+    - https://find-and-update.company-information.service.gov.uk/company/14298073/filing-history (accounts to 31 Dec 2024, filed 30 May 2025)
+    - https://www.facebook.com/ads/library/ (GB, keyword "Sunna Supplements", checked 2026-08-13 — ~170 results, page facebook.com/sunnasupps)
+    - https://library.tiktok.com/ads (GB, advertiser "SUNNA SUPPLEMENTS LTD", checked 2026-08-13 — 1,034 ads in 2026 YTD, latest 12/08/2026)
+    - Rendered-homepage / contact-page / PDP technology-profiler pass, 2026-08-13 (script tags, Shopify app extension asset URLs, web-pixels config list, tag ids, response headers)
+  summary: >
+    Sunna Supplements is a UK D2C supplements brand positioning itself as "the world's 1st halal
+    supplement brand", incorporated 2022-08-16 and founded by Hamza Hanif. It sells halal-certified
+    collagen, vitamins, minerals, electrolytes and sports nutrition on Shopify, direct to a
+    predominantly British Muslim audience. The hero product is Halal Collagen Protein (bovine, GBP 25
+    for one pouch); almost every product is sold as a 1 / 3 / 6-month supply variant, so a multi-month
+    "supply" is a single order line, not a multi-line basket. Delivery is blanket free 24h tracked
+    shipping with no spend threshold, so there is no basket-bunching effect. Growth is paid-social led
+    and heavy: ~170 active Meta ads in GB and 1,034 TikTok ads in 2026 YTD, plus Google Ads, Klaviyo
+    email/SMS, Skio subscriptions and Polar Analytics as the BI layer. The catalog roughly quintupled
+    across the window — a December 2024 core range (Marine Collagen, Omega 3, D3 & K2, Turmeric,
+    Magnesium), a July 2025 expansion wave (Black Seed Oil, Electrolytes, Collagen Sachets, Mango Lassi
+    collagen drink), an October/November 2025 sports-nutrition and free-gift-funnel push (Creatine,
+    duo bundles, GBP 0.00 shaker and "Blueprint" lead magnets), a December 2025 winter-immunity trio
+    (Iron Complex, Halal Immunity, Black Seed Oil Softgels) and Probiotic in April 2026. A separate US
+    Shopify store went live around October 2025 with its own GA4 property and Google Ads account. The
+    defining commercial feature is Islamic-calendar seasonality: Ramadan and Eid are the peak trading
+    windows and they migrate ~11 days earlier each year, so the peak moves from March 2025 to
+    February/March 2026 to early February 2027.
+  product_catalog:
+    hero_products:
+      - Halal Collagen Protein
+      - Marine Collagen
+      - Electrolytes - Tropical Refresh
+      - Creatine Monohydrate
+      - Black Seed Oil
+    current_products:
+      - name: Halal Collagen Protein
+        current_price: 25.00
+        currency: GBP
+        product_url: https://sunnasupplements.com/products/halal-collagen-protein
+        evidence_notes: products.json 2026-08-13, published_at 2024-11-29. 1 Pouch GBP 25.00, 3 Pouches GBP 56.25 (compare_at 75.00), 6 Pouches GBP 99.97 (compare_at 150.00). The hero SKU.
+      - name: Collagen 3 Month Supply (750g)
+        current_price: 56.25
+        currency: GBP
+        product_url: https://sunnasupplements.com/
+        evidence_notes: products.json 2026-08-13, published_at 2024-11-29, compare_at 75.00 (SAVE 25% badge live on the homepage).
+      - name: Marine Collagen
+        current_price: 30.00
+        currency: GBP
+        product_url: https://sunnasupplements.com/
+        evidence_notes: products.json 2026-08-13, published_at 2024-12-06. 1 Month 30.00, 3 Months 78.00 (compare_at 90.00), 6 Months 144.00 (compare_at 180.00).
+      - name: Omega 3 Fish Oil
+        current_price: 30.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2024-12-06. 3 Months 59.99 (compare_at 90.00), 6 Months 118.00 (compare_at 180.00).
+      - name: Vitamin D3 & K2 MK-7 with MCT Oil
+        current_price: 25.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2024-12-06. 3 Months 49.99, 6 Months 89.99.
+      - name: Turmeric Complex
+        current_price: 25.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2024-12-06.
+      - name: Magnesium Complex
+        current_price: 25.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2024-12-06.
+      - name: Black Seed Oil
+        current_price: 20.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-07-11. 3 Months 55.00, 6 Months 100.00.
+      - name: Halal Collagen Protein Sachets
+        current_price: 15.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-07-12. 3 Boxes 37.50, 6 Boxes 60.00. Entry price point.
+      - name: Mango Lassi Collagen Drink with Vitamin C
+        current_price: 33.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-07-12. 6 Weeks 78.00, 3 Months 132.00. Highest-AOV consumable.
+      - name: Electrolytes - Tropical Refresh
+        current_price: 35.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-07-12. 3 Months 99.00, 6 Months 180.00. Also sold as "Tropical Refresh Electrolytes + 3 FREE Gifts (Worth GBP 50)".
+      - name: Electrolytes - Tropical Refresh (Duo)
+        current_price: 60.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-11-26, compare_at 70.00. Duo bundle, an explicit AOV lever.
+      - name: Creatine Monohydrate - Unflavoured
+        current_price: 25.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-10-31. 3 Months 56.25, 6 Months 99.97. Move into sports nutrition.
+      - name: Creatine Monohydrate - Unflavoured (Duo)
+        current_price: 50.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-11-26.
+      - name: Iron Complex
+        current_price: 25.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-12-01. 3 Bottles 56.25 (compare_at 75.00), 6 Bottles 99.99 (compare_at 150.00).
+      - name: Halal Immunity
+        current_price: 19.99
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-12-01, compare_at 25.00 (SAVE 21% badge live on the homepage 2026-08-13). 3 Months 56.25, 6 Months 99.98.
+      - name: Black Seed Oil Softgels
+        current_price: 30.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-12-01. 3 Months 50.00, 6 Months 90.00.
+      - name: Probiotic
+        current_price: 30.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2026-04-01. 3 Months 45.00 (compare_at 90.00), 6 Months 80.00 (compare_at 180.00). Newest launch in the window.
+      - name: Suhoor Support +
+        current_price: 45.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-04-07. Explicitly Ramadan-targeted (suhoor is the pre-dawn meal) — direct evidence that Islamic-calendar seasonality is a deliberate commercial motion.
+      - name: Gut Health Bundle
+        current_price: 60.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-07-15, compare_at 80.00.
+      - name: Shaker Bottle
+        current_price: 5.99
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2023-11-23. Blue/Black/Red, 1/3/6 packs. Oldest SKU in the catalog.
+      - name: Transparent Tumbler
+        current_price: 9.99
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2024-10-31.
+      - name: Miswak
+        current_price: 4.99
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2024-11-28, compare_at 20.00. Low-price accessory.
+      - name: BPA-Free Shaker Bottle (free gift)
+        current_price: 0.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-10-16, price 0.00 with compare_at 9.95. A genuine GBP 0.00 SKU used as a gift-with-purchase.
+      - name: The Collagen Optimisation Blueprint (free lead magnet)
+        current_price: 0.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-10-16, price 0.00 with compare_at 19.95.
+      - name: The Hydration Optimisation Blueprint (free lead magnet)
+        current_price: 0.00
+        currency: GBP
+        evidence_notes: products.json 2026-08-13, published_at 2025-10-23, price 0.00 with compare_at 19.95.
+      - name: Shipping Protection (Navidium)
+        current_price: 0.99
+        currency: GBP
+        evidence_notes: >
+          products.json 2026-08-13, published_at 2024-11-28, sku prefix NVDPROTECTION. Not merchandise —
+          a Navidium shipping-protection app product carrying 100 price-ladder variants from GBP 0.99 to
+          GBP 74.25. Modelled with a reduced ladder of ~12 tiers and flagged as a data issue because it
+          silently inflates product revenue and AOV if not excluded.
+    historic_or_delisted_products:
+      - name: Halal Collagen Protein + Free Shaker
+        inferred_price: 25.00
+        rationale: Present in products.json (published_at 2025-06-26) but every variant is available=false — a real delisted bundle. Modelled as live 2025-06 to 2025-10 then retired when the standalone GBP 0.00 shaker gift replaced it.
+      - name: Shaker Bottle - Red
+        inferred_price: 5.99
+        rationale: Red variants of the Shaker Bottle are available=false in products.json 2026-08-13; modelled as a colourway discontinued mid-window.
+      - name: Halal Collagen Protein - Unflavoured 250g (legacy pouch size)
+        inferred_price: 20.00
+        rationale: The Amazon listing carries a 250g unflavoured pouch; modelled as the pre-2025 pouch format phased out when the current 250g/750g architecture settled. Adjacent to the observed price ladder.
+      - name: Ramadan Essentials Bundle 2025
+        inferred_price: 55.00
+        rationale: Suhoor Support + (published 2025-04-07) and the Electrolytes range show a deliberate Ramadan motion; modelled as a seasonal bundle live Feb-Apr 2025 and Jan-Mar 2026, priced between the Gut Health Bundle (GBP 60) and a 3-month supply.
+      - name: Vitamin C Effervescent
+        inferred_price: 15.00
+        rationale: Adjacent to the GBP 15 sachet price point and the immunity range; modelled as an early-2025 SKU delisted when Halal Immunity launched 2025-12-01.
+      - name: Sunna Tote Bag
+        inferred_price: 7.99
+        rationale: Low-volume merch adjacent to the Shaker/Tumbler accessory tier; modelled as a promo add-on retired mid-window.
+    price_points:
+      - 0.00
+      - 4.99
+      - 5.99
+      - 9.99
+      - 15.00
+      - 19.99
+      - 20.00
+      - 25.00
+      - 30.00
+      - 33.00
+      - 35.00
+      - 37.50
+      - 45.00
+      - 49.99
+      - 50.00
+      - 55.00
+      - 56.25
+      - 60.00
+      - 78.00
+      - 80.00
+      - 90.00
+      - 99.00
+      - 99.97
+      - 118.00
+      - 132.00
+      - 144.00
+      - 180.00
+    bundles:
+      - 3-month supply (single line, ~25% off the 1-month unit rate)
+      - 6-month supply (single line, ~33% off the 1-month unit rate)
+      - Duo bundles (Electrolytes Duo GBP 60, Creatine Duo GBP 50)
+      - Gut Health Bundle GBP 60
+      - Electrolytes gift-with-purchase - "+ 3 FREE Gifts (Worth GBP 50)"
+    subscription: available
+    subscription_platform: Skio
+    subscription_modeling: >
+      Modelled as a first-class Skio source (subscriptions + charge-level subscription orders) that
+      references the Shopify order the charge created, plus selling-plan fields on the Shopify line
+      items. Skio is confirmed by the skio-subscriptions-yc-s20 app extension and the
+      subscriptions-23-158 referral-banner assets on the rendered storefront. The live PDP exposes two
+      parallel selling-plan groups at 20% and 10% price adjustments, each with 1 Month / 3 Months /
+      6 Months delivery intervals — modelled as a 20% "Subscribe & Save" plan on hero SKUs and a 10%
+      plan elsewhere. Cadence is dominated by the 1-month interval (monthly collagen replenishment),
+      which gives a smooth decaying retention curve rather than Fussy's sawtooth, with minor bumps at
+      m3 / m6 from the 3-month and 6-month intervals.
+    promotions:
+      - offer_name: Newsletter welcome offer
+        offer_type: First-order discount
+        details: 10% off the first order for newsletter signup, captured through the Klaviyo onsite form. Modelled as a first-order discount on ~40% of new-customer orders.
+        evidence_source: https://sunnasupplements.com/ (Klaviyo onsite embed, company_id XGGzp5)
+      - offer_name: Subscribe & Save
+        offer_type: Subscription discount
+        details: Skio selling plans at 20% (hero SKUs) and 10% (rest) off, at 1 / 3 / 6-month delivery intervals. Applied to every subscription first order and renewal.
+        evidence_source: https://sunnasupplements.com/products/halal-collagen-protein (selling_plan_groups price_adjustments 20 and 10)
+      - offer_name: Multi-month supply discount
+        offer_type: Volume discount baked into the price ladder
+        details: >
+          3-month and 6-month variants are priced ~25% and ~33% below the 1-month unit rate
+          (e.g. Halal Collagen 1 Pouch GBP 25.00, 3 Pouches GBP 56.25 vs compare_at GBP 75.00,
+          6 Pouches GBP 99.97 vs compare_at GBP 150.00). This is the single biggest AOV driver and
+          is a list-price discount, so basket calibration must target the NET price per
+          references/metric-definitions.md.
+        evidence_source: https://sunnasupplements.com/products.json (compare_at_price on 3/6-month variants)
+      - offer_name: Referral programme
+        offer_type: Referral credit
+        details: Skio Referrals banner is live on the storefront ("Referral discount applied to cart! Create your first order to claim your discount!"). Modelled as ~4% of new customers arriving referral-attributed with a first-order credit.
+        evidence_source: https://sunnasupplements.com/ (skio-referrals.js, SkioReferralBanner)
+      - offer_name: Ramadan and Eid trading windows
+        offer_type: Seasonal sitewide discount
+        details: >
+          The sharpest trading windows of the year, driven by the Islamic calendar rather than the
+          Gregorian one. Modelled as the peak volume months with realised AOV depressed ~2-2.5% by
+          discounting, and with a distinctive bulk-buying mix shift toward 3-month and 6-month supplies.
+        evidence_source: Suhoor Support + (products.json published_at 2025-04-07) plus Ramadan 1446/1447/1448 dates; sitewide banner not captured, so the discount depth is an assumption
+      - offer_name: Black Friday / Cyber Week
+        offer_type: Sitewide seasonal discount
+        details: Modelled as a November volume peak (~1.12x the mean month) with realised AOV depressed ~5.5%. Category norm, not a captured 2025 banner.
+        evidence_source: assumption (category norm; not observed on-site 2026-08-13)
+      - offer_name: Gift with purchase
+        offer_type: Free product line
+        details: >
+          "Tropical Refresh Electrolytes + 3 FREE Gifts (Worth GBP 50)" plus standalone GBP 0.00 SKUs
+          (BPA-Free Shaker, Collagen Blueprint, Hydration Blueprint). Modelled as genuine GBP 0.00 order
+          lines, which is also a selected data issue.
+        evidence_source: https://sunnasupplements.com/products.json (price 0.00 with compare_at 9.95 / 19.95)
+      - offer_name: Live percentage-off badges
+        offer_type: Ongoing product-level discount
+        details: Halal Immunity GBP 25.00 -> GBP 19.99 (SAVE 21%), Collagen 3 Month Supply GBP 75.00 -> GBP 56.25 (SAVE 25%), Probiotic 3 Months GBP 90.00 -> GBP 45.00 — all live on the homepage 2026-08-13.
+        evidence_source: https://sunnasupplements.com/ and products.json compare_at_price
+    delivery_pricing:
+      free_delivery_threshold:
+      delivery_policy_summary: >
+        Blanket free delivery with NO spend threshold — "Free 24H Tracked Shipping" is stated in the
+        site header, footer and cart drawer. Orders ship within 2 business days, primarily via Amazon
+        Express Shipping. Because shipping is free rather than threshold-gated, there is no
+        basket-bunching effect to model and shipping is 0.00 on every Shopify order, so the
+        GA4-vs-Shopify shipping revenue mismatch that applies to flat-fee brands does NOT apply here.
+        A separate optional Navidium shipping-protection line (GBP 0.99 upward) does appear on some
+        orders and is modelled as a data issue instead.
+      evidence_source: https://sunnasupplements.com/policies/shipping-policy and https://sunnasupplements.com/ (header/footer "Free 24H Tracked Shipping")
+  commercial_assumptions:
+    annual_revenue_assumption: 11632000   # trailing 12 months to 2026-08
+    annual_growth_rates:
+      - period: FY_Mar2026_Feb2027_vs_FY_Mar2025_Feb2026
+        growth_rate: 1.58
+    monthly_orders_assumption: 23300      # 2026-08
+    aov_assumption: 43.67                 # 2026-08
+    growth_trend: >
+      Fast but decelerating scale-up: ~5.5% month-on-month underlying growth at the start of the window
+      easing to ~2.2% by the end, on top of five evidenced catalog step changes (2025-07 range wave,
+      2025-10/11 sports-nutrition and duo bundles, 2025-12 immunity trio, 2026-04 Probiotic) and
+      Islamic-calendar seasonality. Derived calendar-year revenue: CY2024 ~GBP 4.2m (inferred from
+      filed accounts), CY2025 ~GBP 8.4m (+100%), CY2026 ~GBP 13.5m (+61%).
+    repeat_rate_range: repeat order-share ~0.38 rising to ~0.48; subscription order-share ~0.27 rising to ~0.36; Subscribe & Save take-rate ~0.17 rising to ~0.22 of first orders; ~1.6 rising to ~2.1 renewals per subscriber; ~1.7 orders per acquired customer over the 24-month window
+    refund_rate_range: 0.024-0.040
+    scale_note: >
+      DERIVED, NOT PUBLISHED. Companies House accounts for the 16-month period ended 31 Dec 2024 were
+      filed without a profit and loss account (the Management Information section is excluded from the
+      public filing), so turnover is not disclosed. The scale anchor is built from three balance-sheet
+      facts in that filing: corporation-tax creditor GBP 148,487 (implying taxable profit ~GBP 594k at
+      25%), retained earnings rising GBP 37,036 -> GBP 347,027 (post-tax profit ~GBP 310k over the 16
+      months, so pre-tax ~GBP 458k), and closing stock GBP 292,652 against trade creditors GBP 414,974.
+      At a D2C supplement gross margin of ~73-75% and a net margin of ~10%, that implies ~GBP 4.6m of
+      revenue over the 16 months; stock turning ~4x/yr against ~26% COGS independently implies
+      ~GBP 4.5m annualised. Both routes land on CY2024 ~GBP 4.0-4.5m, taken as GBP 4.2m. Growth from
+      there to CY2025 ~GBP 8.4m and CY2026 ~GBP 13.5m is an ESTIMATE informed by the catalog expanding
+      from ~6 to 32 products, the US store launch, and paid-media intensity (1,034 GB TikTok ads in 2026
+      YTD, ~170 active GB Meta ads). It is not a published or client-confirmed figure and must be
+      signed off before the dataset is used in a pitch.
+  metric_trajectory:
+    annual_revenue_by_year:
+      - year: FY_Mar2025_Feb2026
+        revenue: 9269000
+      - year: FY_Mar2026_Feb2027
+        revenue: 14647000
+    revenue_by_period:
+      - period: 2025-03
+        revenue: 720000
+      - period: 2025-04
+        revenue: 544000
+      - period: 2025-05
+        revenue: 579000
+      - period: 2025-06
+        revenue: 670000
+      - period: 2025-07
+        revenue: 608000
+      - period: 2025-08
+        revenue: 629000
+      - period: 2025-09
+        revenue: 742000
+      - period: 2025-10
+        revenue: 793000
+      - period: 2025-11
+        revenue: 952000
+      - period: 2025-12
+        revenue: 863000
+      - period: 2026-01
+        revenue: 990000
+      - period: 2026-02
+        revenue: 1184000
+      - period: 2026-03
+        revenue: 1148000
+      - period: 2026-04
+        revenue: 910000
+      - period: 2026-05
+        revenue: 1046000
+      - period: 2026-06
+        revenue: 1011000
+      - period: 2026-07
+        revenue: 975000
+      - period: 2026-08
+        revenue: 1018000
+      - period: 2026-09
+        revenue: 1179000
+      - period: 2026-10
+        revenue: 1241000
+      - period: 2026-11
+        revenue: 1464000
+      - period: 2026-12
+        revenue: 1295000
+      - period: 2027-01
+        revenue: 1590000
+      - period: 2027-02
+        revenue: 1765000
+    orders_by_period:
+      - period: 2025-03
+        orders: 18200
+      - period: 2025-04
+        orders: 14400
+      - period: 2025-05
+        orders: 14900
+      - period: 2025-06
+        orders: 17100
+      - period: 2025-07
+        orders: 15400
+      - period: 2025-08
+        orders: 15800
+      - period: 2025-09
+        orders: 18500
+      - period: 2025-10
+        orders: 19600
+      - period: 2025-11
+        orders: 24700
+      - period: 2025-12
+        orders: 21000
+      - period: 2026-01
+        orders: 23900
+      - period: 2026-02
+        orders: 27400
+      - period: 2026-03
+        orders: 26500
+      - period: 2026-04
+        orders: 21900
+      - period: 2026-05
+        orders: 24500
+      - period: 2026-06
+        orders: 23500
+      - period: 2026-07
+        orders: 22500
+      - period: 2026-08
+        orders: 23300
+      - period: 2026-09
+        orders: 26800
+      - period: 2026-10
+        orders: 28000
+      - period: 2026-11
+        orders: 34700
+      - period: 2026-12
+        orders: 28800
+      - period: 2027-01
+        orders: 34100
+      - period: 2027-02
+        orders: 37400
+    aov_by_period:
+      - period: 2025-03
+        aov: 39.54
+      - period: 2025-04
+        aov: 37.75
+      - period: 2025-05
+        aov: 38.84
+      - period: 2025-06
+        aov: 39.17
+      - period: 2025-07
+        aov: 39.49
+      - period: 2025-08
+        aov: 39.81
+      - period: 2025-09
+        aov: 40.13
+      - period: 2025-10
+        aov: 40.45
+      - period: 2025-11
+        aov: 38.53
+      - period: 2025-12
+        aov: 41.10
+      - period: 2026-01
+        aov: 41.42
+      - period: 2026-02
+        aov: 43.20
+      - period: 2026-03
+        aov: 43.32
+      - period: 2026-04
+        aov: 41.53
+      - period: 2026-05
+        aov: 42.70
+      - period: 2026-06
+        aov: 43.03
+      - period: 2026-07
+        aov: 43.35
+      - period: 2026-08
+        aov: 43.67
+      - period: 2026-09
+        aov: 43.99
+      - period: 2026-10
+        aov: 44.31
+      - period: 2026-11
+        aov: 42.18
+      - period: 2026-12
+        aov: 44.96
+      - period: 2027-01
+        aov: 46.64
+      - period: 2027-02
+        aov: 47.20
+    # REALIZED from the generated data (2026-08-13 build). 2027-H1 reads below the others
+    # because the window closes before those cohorts can repeat — right-censoring, not decay.
+    repeat_rate_by_period:
+      - period: 2025-H2
+        repeat_share: 0.367
+      - period: 2026-H1
+        repeat_share: 0.409
+      - period: 2026-H2
+        repeat_share: 0.456
+      - period: 2027-H1
+        repeat_share: 0.434
+    refund_rate_by_period:
+      - period: baseline
+        refund_rate: 0.028
+      - period: promo_window
+        refund_rate: 0.038
+      - period: post_ramadan
+        refund_rate: 0.040
+    # PRE-GENERATION ESTIMATES. These are the internally consistent solution of the order-mix
+    # identity in references/metric-definitions.md
+    #   1 = new_share x (1 + take_rate x renewals_per_subscriber) + adhoc_repeat_share
+    # at, by half-year: (new 0.62, take 0.17, renewals/sub 1.6, adhoc 0.211),
+    # (0.58, 0.19, 1.8, 0.222), (0.55, 0.21, 1.95, 0.225), (0.52, 0.22, 2.1, 0.240).
+    # Each solution balances to within 0.001. Replace with REALIZED values after generation.
+    # Cadence is dominated by the 1-month Skio interval, so the curve decays smoothly rather than
+    # producing Fussy's sawtooth; the 3-month and 6-month intervals add minor bumps at m3 and m6.
+    # REALIZED from the generated data over the 11 cohorts (2025-04..2026-02) that have a
+    # full 12 months of observation inside the window. The pre-generation estimate had m1 at
+    # 0.205; the realized curve is lower and cadence-shaped, because only ~70% of subscribers
+    # take the 1-month interval — the 3- and 6-month intervals move their first renewal out
+    # to m3 and m6, which is why m3 reads ABOVE m1.
+    retention_checkpoints:
+      m1: 0.108
+      m3: 0.122
+      m6: 0.091
+      m12: 0.053
+    retention_cadence_months:
+      m2: 0.088
+      m4: 0.056
+      m5: 0.051
+      m9: 0.059
+      m13: 0.025
+    retention_shape_notes:
+      - >
+        The curve is cadence-shaped, not smoothly decaying. Peaks at m1 (1-month Skio interval),
+        m3 (3-month interval) and m6 (6-month interval plus the 3-month cohort's second renewal)
+        sit above troughs at m4-m5 (~0.05). m3 reads higher than m1 because the 1-month
+        subscriber base decays fast (survival 0.82 / 0.76 / 0.72 per cycle) while the 3-month
+        cohort arrives intact at m3. This is a real feature of a 1/3/6-month supply catalog.
+      - >
+        RAMADAN COHORTS RETAIN WORSE EARLY AND THEN CONVERGE — the headline analytical trap.
+        Realized: Ramadan cohorts m1 0.083 / m3 0.111 / m6 0.096 against other cohorts
+        m1 0.110 / m3 0.124 / m6 0.090. That is -24% at m1, -11% at m3, then a crossover by m6.
+        The cause is basket size, not customer quality: Ramadan cohorts buy 3- and 6-month
+        supplies at 1.5x the baseline rate and genuinely are not in the market again for months.
+      - >
+        Two definitions give two curves. The checkpoints above use a CALENDAR-MONTH offset. The
+        monthly_cohort_retention analytics output buckets by ELAPSED 30-DAY PERIODS from the exact
+        first-order timestamp and discards bucket 0, so it will read lower. Record both after
+        generation and never mix them in one chart.
+    new_vs_repeat_mix_by_period:
+      - period: 2025-H2
+        new_share: 0.62
+        repeat_share: 0.38
+      - period: 2026-H1
+        new_share: 0.58
+        repeat_share: 0.42
+      - period: 2026-H2
+        new_share: 0.55
+        repeat_share: 0.45
+      - period: 2027-H1
+        new_share: 0.52
+        repeat_share: 0.48
+    # REALIZED. 2025-H2 reads above the pre-generation 0.27 because the pre-window legacy
+    # subscriber base is still renewing early in the window; it settles from 2026.
+    subscription_share_by_period:
+      - period: 2025-H2
+        subscription_order_share: 0.340
+      - period: 2026-H1
+        subscription_order_share: 0.337
+      - period: 2026-H2
+        subscription_order_share: 0.347
+      - period: 2027-H1
+        subscription_order_share: 0.325
+    acquisition_channel_mix:
+      - channel: Paid Social
+        share: 0.36
+        note: Meta ~0.23 and TikTok ~0.13. Deliberately above the 28-32% benchmark band because paid social is unusually dominant here — ~170 active GB Meta ads including creator whitelisting, and 1,034 GB TikTok ads in 2026 YTD.
+      - channel: Paid Search
+        share: 0.15
+      - channel: Direct
+        share: 0.12
+      - channel: Organic Search
+        share: 0.11
+      - channel: Email
+        share: 0.11
+      - channel: Referral
+        share: 0.04
+      - channel: Affiliate
+        share: 0.03
+      - channel: Unassigned
+        share: 0.08
+    seasonality_notes:
+      - >
+        Seasonality is BAKED INTO orders_by_period, not applied as a separate multiplier layer by the
+        generator. The multipliers below document the shape already present in the monthly path; the
+        generator pins order counts to orders_by_period.
+      - >
+        Normalised multipliers (mean 1.000) — 2025-03 1.238, 2025-04 0.890, 2025-05 0.900, 2025-06 0.987,
+        2025-07 0.851, 2025-08 0.842, 2025-09 0.948, 2025-10 0.967, 2025-11 1.112, 2025-12 0.967,
+        2026-01 1.064, 2026-02 1.219, 2026-03 1.141, 2026-04 0.871, 2026-05 0.967, 2026-06 0.900,
+        2026-07 0.842, 2026-08 0.851, 2026-09 0.958, 2026-10 0.977, 2026-11 1.122, 2026-12 0.967,
+        2027-01 1.161, 2027-02 1.258.
+      - >
+        THE ISLAMIC CALENDAR IS THE PRIMARY SEASONAL DRIVER AND IT MIGRATES. Ramadan 1446 ran
+        1-29 Mar 2025 (Eid al-Fitr 30 Mar), Ramadan 1447 ran 18 Feb - 19 Mar 2026 (Eid al-Fitr 20 Mar),
+        Ramadan 1448 runs 8 Feb - 9 Mar 2027 (Eid al-Fitr ~10 Mar). Each Ramadan starts ~11 days earlier
+        than the last, so the peak month walks backwards: March in 2025, February/March in 2026, and
+        January/February in 2027. Eid al-Adha adds a secondary peak (6 Jun 2025, 27 May 2026).
+      - >
+        This makes naive year-on-year MONTH comparisons wrong, which is the headline analytical trap in
+        this dataset: March 2026 is -1.6% versus a seasonality-adjusted March 2025 on multiplier alone
+        while the business grew ~60%, and February 2027 will look explosive versus February 2026 for a
+        calendar reason rather than a commercial one. The correct comparison is Ramadan-aligned, not
+        month-aligned.
+      - Secondary peaks are January (New Year health resolutions) and November (Black Friday). Troughs are July and August (summer holidays and Hajj travel) and the month immediately after Eid al-Fitr.
+    inflection_points:
+      - date: 2025-07-12
+        metric: category_expansion_wave_1
+        expected_change: Black Seed Oil, Electrolytes (Tropical Refresh), Collagen Sachets and the Mango Lassi Collagen Drink all go live. From 2025-08 the underlying order path steps up ~4% and AOV ~GBP 0.40 as the GBP 33-35 consumables enter the mix.
+        rationale: products.json published_at 2025-07-11 / 2025-07-12 for all four ranges.
+      - date: 2025-10-31
+        metric: category_expansion_sports_nutrition
+        expected_change: Creatine Monohydrate launches, opening a new (younger, male-skewed) audience. From 2025-11 the order path steps up ~3% with roughly flat AOV.
+        rationale: products.json published_at 2025-10-31.
+      - date: 2025-11-26
+        metric: aov_lever_duo_bundles
+        expected_change: Electrolytes Duo (GBP 60) and Creatine Duo (GBP 50) launch. From 2025-12 AOV steps up ~GBP 0.70 with no separate volume lift.
+        rationale: products.json published_at 2025-11-26.
+      - date: 2025-12-01
+        metric: category_expansion_immunity
+        expected_change: Iron Complex, Halal Immunity and Black Seed Oil Softgels launch as a winter-immunity trio. From 2025-12 the order path steps up ~3.5%; Halal Immunity at GBP 19.99 slightly damps AOV.
+        rationale: products.json published_at 2025-12-01 for all three.
+      - date: 2026-04-01
+        metric: product_launch_probiotic
+        expected_change: Probiotic launches at GBP 30 / GBP 45 (3mo) / GBP 80 (6mo). From 2026-04 the order path steps up ~2% and AOV ~GBP 0.30.
+        rationale: products.json published_at 2026-04-01.
+      - date: 2025-11-03
+        metric: channel_attribution_break
+        expected_change: GA4 Unassigned share rises from the ~8% baseline to ~22% for ~9 days, then returns to baseline.
+        rationale: >
+          The US Shopify store (shop id 0854/6612/0457, GA4 G-4QRPG8CS4C, Google Ads AW-17561856382)
+          went live around Oct/Nov 2025 alongside an EasyLocation geo-redirect app on the UK store.
+          A geo-redirect intercepting UK sessions before the UK GA4 tag fires is the most believable
+          cause of a real attribution gap at that moment.
+      - date: 2026-11-23
+        metric: channel_attribution_break
+        expected_change: Second, shorter Unassigned spike to ~20% for ~7 days over Black Friday.
+        rationale: GTM-5CCVD6QR plus Meta, TikTok and Google tags all firing through one container; a Cyber Week tagging change is the standard cause. Keeps breaks sparse per references/channel-mix-benchmarks.md.
+  seasonality:
+    peak_periods:
+      - Ramadan and Eid al-Fitr (Mar 2025, Feb-Mar 2026, Feb 2027)
+      - November (Black Friday)
+      - January (New Year health resolutions)
+    low_periods:
+      - July
+      - August
+      - the month immediately following Eid al-Fitr
+    category_dynamics:
+      - Ramadan drives both a volume peak and a mix shift toward 3-month and 6-month supplies as customers stock up before fasting; that bulk buying then suppresses their repeat orders for the following 3-6 months, which distorts naive cohort retention.
+      - Electrolytes and Suhoor Support + are explicitly Ramadan-shaped products (hydration and pre-dawn-meal support), so the category peak is a deliberate commercial motion rather than incidental.
+      - Collagen and beauty-adjacent SKUs are less seasonal than the immunity range, which is winter-weighted, so the December 2025 immunity launch partially fills the post-Ramadan trough from 2026.
+      - Supplements are a high-repeat, low-consideration category, so paid social carries acquisition and the subscription layer is a retention overlay rather than the core model.
+
+source_systems:
+  confirmed:
+    - name: Shopify
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://sunnasupplements.com/products.json
+        - https://sunnasupplements.com/ (powered-by:Shopify response header, cdn.shopify.com assets, shop.app, web-pixels-manager shopId 65529741533)
+      evidence_notes: >
+        Response header "powered-by: Shopify"; live products.json returns 32 products; web-pixels-manager
+        reports shopId 65529741533; cart_currency=GBP and localization=GB cookies confirm a single-market
+        GB storefront. Profiler pass 2026-08-13.
+      domain: commerce
+      export_shape: standard connector schema
+      platform_resources:
+        - products
+        - orders
+        - customers
+        - order_items
+      join_keys:
+        - product_id
+        - variant_id
+        - order_id
+        - customer_id
+      schema_basis: official documentation
+      schema_notes: Subscription context carried on line items via selling-plan fields; order-level subscription status comes from the Skio extracts. Multi-month supplies are variants, so one supply is ONE line item — do not model them as multi-line baskets.
+      known_limitations:
+        - The separate US Shopify store (shop id 0854/6612/0457) is a different shop and is out of scope for this dataset.
+        - Amazon marketplace and third-party retailer sell-through never reaches Shopify.
+    - name: Skio
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://sunnasupplements.com/ (cdn.shopify.com/extensions/019fd61f-.../subscriptions-23-158/assets/skio-referrals.js and .css, SkioReferralBanner)
+        - https://sunnasupplements.com/products/halal-collagen-protein (selling_plan_groups with 20% and 10% price_adjustments at 1/3/6-month intervals)
+      evidence_notes: The skio-subscriptions-yc-s20 app extension and its referral-banner block are embedded in the rendered storefront, and the PDP exposes Skio-shaped selling plan groups. No Recharge, OrderGroove or Bold signature found. Profiler pass 2026-08-13.
+      domain: subscriptions
+      export_shape: standard connector schema
+      platform_resources:
+        - subscriptions
+        - charges
+      join_keys:
+        - shopify_customer_id
+        - shopify_order_id
+        - subscription_id
+        - charge_id
+      schema_basis: official documentation
+      schema_notes: >
+        NEW standard source for this repo — needs one references/standard-source-schemas/skio.md doc and
+        one RAW_SCHEMA entry, reusable by future clients. Skio's model is close to Recharge's
+        (subscriptions + charges that create real Shopify orders), so it reuses the `subscriptions` and
+        `subscription_orders` roles; the notable differences are Skio's GraphQL-style string ids,
+        explicit `selling_plan_id` on the subscription, and a `dunning` state on failed charges.
+      known_limitations:
+        - Cancellation state is recorded when the customer acts in the portal, which can lag the last billed charge.
+    - name: Klaviyo
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://sunnasupplements.com/ (static.klaviyo.com/onsite/js/XGGzp5/klaviyo.js?company_id=XGGzp5, klaviyo-email-marketing-sms app extension)
+      evidence_notes: Klaviyo onsite script loaded directly with company_id XGGzp5, plus the klaviyo-onsite-embed app block. No competing ESP (Bloomreach, Customer.io, Attentive, Postscript, Omnisend, Dotdigital) detected. Profiler pass 2026-08-13.
+      domain: lifecycle
+      export_shape: events_api
+      platform_resources:
+        - email_events
+        - sms_events
+      join_keys:
+        - email
+        - profile_id
+      schema_basis: official documentation
+      schema_notes: Single event-per-row stream (klaviyo_events.csv); metric_name names the action. Trimmed to 12 historic months (from 2025-09-01).
+      known_limitations:
+        - Placed Order events carry no reliable Shopify order id, so the link to commerce is soft (email + $value + timestamp), not a hard FK.
+        - The same Klaviyo account almost certainly serves both the UK and US stores, so a share of profiles will not resolve to a UK Shopify customer (modelled as a data issue).
+    - name: GA4
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://sunnasupplements.com/ (measurement id G-Y05CB1KHS3, container GTM-5CCVD6QR)
+      evidence_notes: GA4 measurement id and GTM container both present in the rendered homepage. The US store carries a DIFFERENT property (G-4QRPG8CS4C), confirming the two storefronts are tracked separately. Profiler pass 2026-08-13.
+      domain: web_analytics
+      export_shape: reporting_api
+      platform_resources:
+        - purchase_events
+        - purchase_items
+      join_keys:
+        - transactionId
+      schema_basis: official documentation
+      schema_notes: Reporting/Data API schema, not the BigQuery export. Covers web checkouts only — Skio renewals are created server-side and do not fire a web purchase event.
+      known_limitations:
+        - Shipping is free and included at 0.00, so the GA4-vs-Shopify shipping revenue gap seen at flat-fee brands does not apply here.
+    - name: Google Ads
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://sunnasupplements.com/ (conversion tag AW-11064734997, loaded via GTM-5CCVD6QR)
+      evidence_notes: Google Ads conversion tag id present in the rendered homepage. The US store carries a separate account (AW-17561856382). Profiler pass 2026-08-13.
+      domain: paid_media
+      export_shape: googleads_api
+      platform_resources:
+        - campaign_performance
+      join_keys:
+        - campaign_id
+      schema_basis: official documentation
+      schema_notes: Daily campaign-level GAQL performance across SEARCH / SHOPPING / PERFORMANCE_MAX / DEMAND_GEN. Full 24-month window.
+      known_limitations:
+        - Aggregate daily fact; no join to individual commerce orders.
+    - name: Meta Ads
+      confirmation_source: public_evidence
+      evidence_links:
+        - https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=GB&q=%22Sunna%20Supplements%22
+        - https://www.facebook.com/sunnasupps/
+      evidence_notes: >
+        Meta Ad Library (GB, checked 2026-08-13) returns ~170 results for the advertiser page
+        facebook.com/sunnasupps, with active ads first shown 14 May 2026, 30 May 2026 and 14 Jul 2026,
+        running across Facebook and Instagram, and including creator-whitelisted ads
+        ("Sadiyah with Sunna Supplements"). Note that NO Meta pixel was visible in the rendered
+        homepage — it sits inside Shopify's server-side web-pixels sandbox (nine APP pixels are
+        registered in webPixelsConfigList without resolvable names). The Ad Library is the stronger
+        evidence and is what confirms this system.
+      domain: paid_media
+      export_shape: marketing_api
+      platform_resources:
+        - insights
+        - ad_creatives
+      join_keys:
+        - ad_id
+        - campaign_id
+      schema_basis: official documentation
+      schema_notes: Daily ad-level insights plus a creative dimension table. Full 24-month window.
+      known_limitations:
+        - Aggregate daily fact; platform-attributed conversions will not reconcile to Shopify orders (that mismatch is the point).
+    - name: TikTok Ads
+      confirmation_source: public_evidence
+      evidence_links:
+        - https://library.tiktok.com/ads (region GB, advertiser "SUNNA SUPPLEMENTS LTD", checked 2026-08-13)
+      evidence_notes: >
+        TikTok Commercial Content Library returns 1,034 ads for advertiser SUNNA SUPPLEMENTS LTD in the
+        GB region for 2026 to date, with ads last shown 12/08/2026 — the single heaviest paid channel by
+        creative volume. As with Meta, no TikTok pixel is visible in the rendered homepage (it is in the
+        Shopify web-pixels sandbox); the Ad Library is the confirming evidence.
+      domain: paid_media
+      export_shape: business_api
+      platform_resources:
+        - insights
+      join_keys:
+        - campaign_id
+        - adgroup_id
+      schema_basis: official documentation
+      schema_notes: >
+        NEW standard source for this repo — added at references/standard-source-schemas/tiktok-ads.md
+        with one RAW_SCHEMA entry under the existing `ad_performance` role, reusable by future clients.
+        Approved in scope by the user 2026-08-13.
+      known_limitations:
+        - Aggregate daily fact; no join to individual commerce orders.
+    - name: Gorgias
+      confirmation_source: user_confirmed
+      evidence_links:
+        - https://sunnasupplements.com/pages/contact (mailto support@sunnasupplements.com; no helpdesk widget)
+      evidence_notes: >
+        NOT detected by the technology profiler. A full pass over the homepage, contact page and a PDP
+        on 2026-08-13 found no signature for Gorgias, Zendesk, Intercom, Richpanel, Re:amaze, Crisp,
+        Help Scout, Freshdesk, Tidio or Gladly — the only support surface is a mailto to
+        support@sunnasupplements.com, an FAQ page and a Track My Order link. The user directed on
+        2026-08-13 that Gorgias be assumed as the default for a Shopify brand of this size. This is a
+        DIRECTED ASSUMPTION, not evidence, and every support-derived figure carries that caveat.
+      domain: support
+      export_shape: standard connector schema
+      platform_resources:
+        - tickets
+      join_keys:
+        - customer_email
+        - shopify_order_id
+      schema_basis: official documentation
+      schema_notes: Reuses the existing references/standard-source-schemas/gorgias.md spec and RAW_SCHEMA entry.
+      known_limitations:
+        - Order linkage is agent-applied and therefore incomplete (modelled as a data issue).
+        - The system itself is assumed, not confirmed; if the client runs a shared inbox instead, this extract should be dropped rather than re-shaped.
+  resolved_questions:
+    - question: Support / helpdesk system could not be detected.
+      resolution: User directed 2026-08-13 to assume Gorgias. Modelled as a confirmed source with confirmation_source user_confirmed and an explicit assumption caveat.
+    - question: Commercial scale is derived from filed accounts, not published.
+      resolution: User approved the derived path on 2026-08-13 — CY2024 ~GBP 4.2m, FY Mar2025-Feb2026 GBP 9.27m, FY Mar2026-Feb2027 GBP 14.65m.
+    - question: Include the separate US Shopify store?
+      resolution: No. User directed UK-only on 2026-08-13. us.sunnasupplements.com stays out of scope.
+    - question: Include TikTok Ads, given it needs a new source schema?
+      resolution: Yes. User directed on 2026-08-13 that the schema be created as a reusable standard source. tiktok-ads.md and the RAW_SCHEMA entry are now in the repo.
+    - question: Model Polar Analytics as an attribution source?
+      resolution: No. User directed 2026-08-13 to leave Polar out. The attribution-coverage story is carried by GA4 alone.
+  open_questions:
+    - >
+      SUPPORT IS AN ASSUMPTION, NOT EVIDENCE. Gorgias is included on user direction only; no helpdesk
+      signature exists on-site. If the client confirms a shared inbox or a different helpdesk, drop or
+      replace gorgias_tickets.csv — every support-derived figure in the pitch carries this caveat.
+    - >
+      US STORE OUT OF SCOPE (user-directed). us.sunnasupplements.com is a SEPARATE Shopify store (shop
+      id 0854/6612/0457, own theme, 12 products at USD prices, own GA4 property G-4QRPG8CS4C and own
+      Google Ads account AW-17561856382), live from around Oct 2025. The dataset therefore understates
+      total group revenue. If the pitch needs the multi-market story, the US store is an additive second
+      commerce spine, not a rebuild.
+    - >
+      POLAR ANALYTICS LEFT OUT (user-directed). Polar is installed (polar-analytics-28 app extension,
+      polar-cart-injector.js) and does multi-touch attribution as well as BI. It is not modelled, so the
+      attribution-coverage story is carried by GA4 alone. No Triple Whale, Northbeam or Elevar signature
+      was found, so there is no alternative order-level attribution source in this dataset.
+    - >
+      Also detected on-site but NOT modelled as source systems: Polar Analytics (BI), Intelligems (price
+      and offer A/B testing — used below as a data issue, not a source), Navidium (shipping protection —
+      used as a data issue), Vitals (app bundle), Loox (product reviews), EasyLocation (UK/US geo
+      redirect), Hotjar and Microsoft Clarity (behavioural analytics), Alia (backend.alia-prod.com),
+      Trustpilot (reviews, 1,806 reviews), 506.io. Confirm with the client whether any are wanted.
+    - >
+      Amazon marketplace and third-party retail (Amazon.com listing, whlsome, Body Gains) are out of
+      scope; the dataset models the UK D2C Shopify store only and cannot reconcile total group revenue.
+    - >
+      Nine Shopify APP web pixels are registered (apiClientIds 4862993, 123074, 4294333, 111542,
+      5461967, 1780363, 4383523, 4845829, 2329312) plus one custom pixel "purple-black-pixels". The
+      manifest does not expose app names, so these could not be individually resolved. They are
+      consistent with Meta, TikTok, Google, Klaviyo, Skio and Polar all running server-side pixels.
+
+standardization:
+  canonical_tables:
+    - users
+    - orders
+  mapping_notes:
+    - No stage or analytics outputs until raw source outputs are generated, validated, and reviewed.
+    - Skio subscriptions/charges clean into the shared subscriptions / subscription_orders roles alongside the existing Recharge and OrderGroove specs.
+    - Meta Ads and (if approved) TikTok Ads clean into the shared ad_performance metric vocabulary alongside Google Ads.
+    - The Navidium Shipping Protection SKU must be excluded from merchandise revenue during staging and the exclusion recorded in CLEANING_NOTES.md.
+
+data_issues:
+  selected:
+    - issue: Email casing or whitespace drift
+      severity: low
+      expected_prevalence: realized 2.18% of Shopify customer email records
+      check: email_casing_or_whitespace_drift
+      expected_prevalence_range: [0.015, 0.030]
+      affected_systems:
+        - Shopify
+        - Klaviyo
+      visibility: subtle
+      rationale: Email is the join key between commerce and the ESP, so casing/whitespace drift is the standard identity-normalisation problem for a Shopify + Klaviyo stack.
+      notes: Lower/trim normalisation reconciles it in staging.
+    - issue: Near-duplicate orders from Skio billing retries
+      severity: low
+      expected_prevalence: realized 0.301% of orders carry a duplicate-looking order name; underlying id stays unique
+      check: near_duplicate_orders
+      expected_prevalence_range: [0.0015, 0.0045]
+      affected_systems:
+        - Shopify
+        - Skio
+      visibility: subtle
+      rationale: Skio retries failed charges (dunning) and replays webhooks, which is how duplicate-looking order names appear. Lower prevalence than a subscription-dominant brand because only ~21% of orders are recurring charges.
+      notes: Duplicate display name only — the Shopify order id remains unique, so the PK check must still pass.
+    - issue: Channel tracking breaks around the US store launch and Black Friday
+      severity: medium
+      expected_prevalence: realized baseline (median) 8.3% Unassigned, peak day 23.1%; two windows (2025-11-03 for 9 days, 2026-11-23 for 7 days)
+      check: channel_tracking_break
+      expected_prevalence_range: [0.18, 0.25]
+      affected_systems:
+        - GA4
+      visibility: obvious
+      rationale: The EasyLocation UK/US geo-redirect went in around the Oct/Nov 2025 US store launch, and GTM-5CCVD6QR fans out to Meta, TikTok and Google tags — both are believable causes of a real attribution gap.
+      notes: One structural unattributed floor only — do not stack a second random (not set) path on top. See references/channel-mix-benchmarks.md.
+    - issue: Skio renewals bypass GA4 entirely
+      severity: high
+      expected_prevalence: realized 28.6% of non-test orders absent from GA4 — 91.9% of Skio renewals (renewals are 24.7% of orders) plus 7.9% tag/consent loss on web checkouts; GA4 sees 76.8% of Shopify revenue
+      affected_systems:
+        - GA4
+        - Skio
+        - Shopify
+      visibility: subtle
+      rationale: >
+        Skio recurring charges are created server-side with no browser session, so they never fire a GA4
+        web purchase event. First orders and one-time repeats are genuine web checkouts. GA4 therefore
+        understates revenue and, more importantly, understates repeat behaviour and LTV — which for a
+        paid-social-led brand means blended CAC and payback look worse than they are.
+      notes: >
+        MANUAL. Signature — orders present in skio_subscription_orders.shopify_order_id but absent from
+        ga4_reporting_purchase_events.transactionId. The small share of renewals that do appear carry
+        Direct / (not set), never a paid channel.
+    - issue: Navidium shipping-protection SKU counted as merchandise revenue
+      severity: medium
+      expected_prevalence: realized 15.1% of all orders (20.0% of web checkouts) carry a Shipping Protection line across 12 tiers from GBP 0.99 to GBP 9.00, worth GBP 381,503 (1.59% of revenue)
+      affected_systems:
+        - Shopify
+      visibility: obvious
+      rationale: >
+        Shipping Protection (sku prefix NVDPROTECTION) is a real product in the live catalog with a
+        100-variant price ladder. It is an insurance upsell, not merchandise, but it sits in
+        shopify_order_items like any other product. Any per-SKU revenue, units-sold or attach-rate
+        analysis that does not exclude it is wrong, and its price ladder makes it look like a
+        catastrophically inconsistent product price.
+      notes: MANUAL. Signature — product lines with sku LIKE 'NVDPROTECTION%' across ~12 distinct price points on the same product_id, with a unit price uncorrelated to any product cost.
+    - issue: Free-gift and lead-magnet lines at GBP 0.00
+      severity: low
+      expected_prevalence: realized 11.1% of all orders, 14.3% of orders placed after the gift SKUs launched on 2025-10-16
+      affected_systems:
+        - Shopify
+      visibility: obvious
+      rationale: >
+        The live catalog contains genuine GBP 0.00 SKUs (BPA-Free Shaker, Collagen Blueprint, Hydration
+        Blueprint, each with a non-zero compare_at_price) and a "+ 3 FREE Gifts (Worth GBP 50)" bundle.
+        Revenue-per-item, units-per-order and discount-rate calculations all break unless zero-value
+        lines are handled explicitly.
+      notes: MANUAL. Signature — order_items rows with price 0.00 and compare_at_price > 0, never appearing as the only line on an order.
+    - issue: Intelligems price tests produce two prices for one variant in one period
+      severity: medium
+      expected_prevalence: realized 5.4% of order lines on the six tested SKUs sit at a non-catalog price (catalog x 0.9 or x 1.1); 85% of those carry total_discount 0.00 and the remaining 15% also carry that month's promotional discount
+      affected_systems:
+        - Shopify
+      visibility: hidden_until_standardization
+      rationale: >
+        cdn.intelligems.io is live on both the UK and US storefronts. Intelligems runs price and offer
+        A/B tests by serving different prices to different visitors, so the same variant legitimately
+        sells at two prices on the same day with no promotion recorded against the order. An analyst
+        reconciling realised price to catalog price finds a bimodal distribution and no explanation in
+        the discount fields.
+      notes: MANUAL. Signature — for a tested variant_id in a given month, line-level unit price takes two distinct modal values (catalog and catalog x ~0.9 or x ~1.1) with total_discounts = 0 on both.
+    - issue: Klaviyo profiles from the US store with no UK Shopify customer
+      severity: medium
+      expected_prevalence: realized 10.0% of Klaviyo profiles (30,357 of 303,569) and 10.0% of Klaviyo emails do not resolve to a UK Shopify customer
+      affected_systems:
+        - Klaviyo
+        - Shopify
+      visibility: hidden_until_standardization
+      rationale: >
+        us.sunnasupplements.com is a separate Shopify store but almost certainly shares one Klaviyo
+        account with the UK store, so the ESP export contains profiles that will never join to the UK
+        commerce spine. Email-list size and engagement rates therefore cannot be reconciled to UK
+        customers, and naive email-attributed revenue is understated.
+      notes: >
+        MANUAL. Signature — klaviyo_events rows whose email has no match in shopify_customers, carrying
+        US-shaped profile attributes. These are extra CRM rows, never orphan commerce rows.
+    - issue: Ramadan bulk buying suppresses near-term repeat
+      severity: medium
+      expected_prevalence: realized bulk (3/6-month) share 49.3% in Ramadan months vs 33.0% otherwise (1.50x); Ramadan cohorts retain m1 0.083 vs 0.110 baseline, converging by m6
+      affected_systems:
+        - Shopify
+        - Skio
+      visibility: hidden_until_standardization
+      rationale: >
+        Ramadan cohorts skew hard toward 3-month and 6-month supply variants (stocking up before
+        fasting), so those customers legitimately do not reorder for 3-6 months. Cohort retention
+        computed on order recency therefore shows the brand's biggest acquisition cohorts as its worst
+        retaining ones, which is an artefact of basket size, not of customer quality. Combined with the
+        migrating Ramadan date, it is the analytical centrepiece of this dataset.
+      notes: >
+        MANUAL. Signature — Ramadan-month cohorts show a 3/6-month supply share roughly double the
+        baseline and an m1-m3 retention roughly 40% below baseline, which then converges by m6-m9.
+    - issue: Left-censored first cohort at the window edge
+      severity: medium
+      expected_prevalence: realized 68,250 of 363,585 customers (18.8%) were trading before 2025-03-01; the 2025-03 first-order cohort is 18,200 against 10,855 in 2025-04 (1.68x)
+      affected_systems:
+        - Shopify
+        - Skio
+      visibility: hidden_until_standardization
+      rationale: >
+        The brand incorporated in Aug 2022 and did ~GBP 4.2m in CY2024, so a large pre-window customer
+        base exists. Any windowed export makes those customers look like new acquisitions in the first
+        month, producing an oversized and badly-behaved 2025-03 cohort — made worse here because
+        2025-03 is also Ramadan.
+      notes: MANUAL. Signature — customers whose first in-window order is 2025-03 but whose created_at predates 2025-03-01 and who carry a legacy tag.
+    - issue: Test and internal orders in the production extract
+      severity: low
+      expected_prevalence: realized 0.224% of orders (1,259), all GBP 0.00 and all @sunnasupplements.com
+      affected_systems:
+        - Shopify
+      visibility: obvious
+      rationale: Staff testing and 100%-discount internal codes leave zero-total and internal-domain orders in the live export — routine for a brand shipping a new SKU every few weeks.
+      notes: MANUAL. Signature — total_price 0.00 and/or internal email domains and test-pattern names; removed by the staging test-pattern battery. Must be distinguishable from legitimate GBP 0.00 gift LINES on non-zero orders.
+
+execution_plan:
+  approval_status: approved
+  approved_on: 2026-08-13
+  current_phase: complete
+  source_generation_result: >
+    Built 2026-08-13. 14 extracts, 4,194,579 rows, 994 MB, in 4m29s at ROW_SCALE 1.0.
+    `python3 -m synthetic_pitch_data.validate_raw --company sunna` exits 0 — 12 PASS, 0 FAIL,
+    0 WAIVED, 8 MANUAL. All 8 MANUAL signatures were hand-verified and their realized
+    prevalences written back into data_issues above. Awaiting user approval of the
+    source_generation gate before staging.
+  scope_summary: >
+    Generate raw source-shaped datasets for the Sunna Supplements UK D2C store using a products-first
+    dependency model over an 18 historic + 6 future month window (2025-03-01 -> 2027-02-28), UK-only and
+    GBP, across Shopify, Skio, GA4, Klaviyo, Google Ads, Meta Ads, TikTok Ads and Gorgias. No row scaling
+    and no window cut — the build is under the 5m-row threshold. Skio and TikTok Ads are new standard
+    source systems, each adding one schema doc, one RAW_SCHEMA entry and one staging spec, reusable by
+    future clients. Gorgias is included on user direction rather than evidence.
+  approved_time_window:
+    historic_months: 18
+    future_months: 6
+    override_reason: Default window retained. 18 historic months is required so the window contains two complete Ramadan peaks (Mar 2025 and Feb/Mar 2026); a 12-month cut would leave one and destroy the migrating-seasonality story.
+  catalog_and_promotion_summary: >
+    Ground the catalog to the live storefront — GBP 25 Halal Collagen (1 pouch) with GBP 56.25 / GBP 99.97
+    multi-month variants, GBP 30 Marine Collagen and Black Seed Oil Softgels, GBP 35 Electrolytes,
+    GBP 33 Mango Lassi, GBP 25 Creatine / Iron / Turmeric / Magnesium / D3&K2, GBP 19.99 Halal Immunity,
+    GBP 15 Sachets, GBP 60 Duo and Gut Health bundles, GBP 4.99-9.99 accessories, plus genuine GBP 0.00
+    gift SKUs and the Navidium Shipping Protection ladder — plus six adjacent legacy/delisted SKUs. Model
+    the 10% newsletter welcome offer, Skio Subscribe & Save at 20% (hero) and 10% (rest), the multi-month
+    volume ladder as a LIST-PRICE discount (calibrate baskets to NET price), Ramadan/Eid and Black Friday
+    as the sharpest windows with depressed AOV, and the Skio referral credit. Blanket free delivery with
+    no threshold, so no basket bunching and shipping is 0.00 on every order.
+  metric_assumptions_summary: >
+    UK D2C only: FY Mar2025-Feb2026 GBP 9.27m, FY Mar2026-Feb2027 GBP 14.65m (+58%), trailing-12m to Aug
+    2026 GBP 11.63m. AOV GBP 37.25 -> GBP 44.46. Subscription order share 0.27 -> 0.36; repeat order share
+    0.38 -> 0.48; refunds 2.4-4.0%. Retention decays smoothly on the 1-month Skio cadence (pre-generation
+    estimate m1 0.205, m3 0.148, m6 0.104, m12 0.062) with minor m3/m6 bumps. Seasonality is
+    Islamic-calendar driven and MIGRATES ~11 days earlier per year, which is the headline analytical trap.
+  volume_summary: >
+    Full-scale build projects ~3.69m raw rows against the 5m threshold, so no historic-window cut and no
+    operational row scaling are applied (row_volume_scaling_factor 1.0). Klaviyo is additionally capped by
+    a 12 historic month source window. Products are recorded as a protected dimension regardless. Fallback
+    if a faster build is wanted: scaling factor 0.5 (~1.85m rows), rates unaffected.
+  generation_sequence:
+    - step: generate_products
+      depends_on: []
+    - step: generate_orders
+      depends_on:
+        - generate_products
+    - step: generate_customers
+      depends_on:
+        - generate_orders
+        - generate_products
+    - step: generate_dependent_datasets
+      depends_on:
+        - generate_products
+        - generate_orders
+        - generate_customers
+  parallel_groups:
+    - name: downstream_raw_sources
+      members:
+        - shopify_order_items
+        - skio_subscriptions
+        - skio_subscription_orders
+        - ga4
+        - klaviyo
+        - google_ads
+        - meta_ads
+        - tiktok_ads
+        - support_tickets
+      depends_on:
+        - generate_orders
+        - generate_customers
+        - generate_products
+  phase_gates:
+    - phase: source_generation
+      approval_required_before_next: true
+    - phase: stage_standardization
+      approval_required_before_next: true
+    - phase: analytics_generation
+      approval_required_before_next: false
+  consistency_checks:
+    - foreign_key_reconciliation
+    - timestamp_plausibility
+    - cross_system_entity_coverage
+  validation_tests:
+    - name: primary_key_uniqueness
+      threshold:
+        max_duplicates: 0
+    - name: foreign_key_reconciliation
+      threshold:
+        max_orphans: 0
+    - name: ga4_order_timestamp_alignment
+      threshold: 30_minutes
+    - name: modeling_window_bounds
+      threshold:
+        historic_months: 18
+        future_months: 6
+        window_start: 2025-03-01
+        window_end: 2027-02-28
+    - name: source_specific_window_bounds
+      threshold:
+        klaviyo_historic_months: 12
+        earliest_by_file:
+          klaviyo_events.csv: 2025-09-01
+          google_ads_campaign_performance.csv: 2025-03-01
+          meta_ads_insights.csv: 2025-03-01
+          tiktok_ads_insights.csv: 2025-03-01
+          skio_subscription_orders.csv: 2025-03-01
+        # skio_subscriptions.csv is deliberately absent: subscriptions already running when the
+        # window opens genuinely have a created_at before 2025-03-01.
+    - name: promotion_and_discount_consistency
+      threshold:
+        note: Monthly volume targets are promo-inclusive; validate promo effects on AOV/mix, not on monthly volume. See references/metric-definitions.md.
+    - name: metric_trajectory_alignment
+      threshold:
+        orders_pct: 3
+        revenue_pct: 6
+        aov_pct: 4
+  accepted_waivers: []
+  open_questions:
+    - Confirm or replace the helpdesk assumption (Gorgias) — nothing was detectable on-site.
+    - Sign off the derived commercial scale (CY2024 ~GBP 4.2m inferred from filed accounts; CY2025/CY2026 growth estimated).
+    - Confirm UK-only scope versus adding the separate US Shopify store.
+    - Confirm TikTok Ads is in scope (recommended in; costs one new source schema).
+    - Confirm whether Polar Analytics should be modelled as an attribution source or left as a detected-but-unmodelled BI tool.
+
+generation:
+  company_slug: sunna
+  output_workspace: ../synthetic_data
+  raw_extracts_to_build:
+    - shopify_products.csv
+    - shopify_orders.csv
+    - shopify_customers.csv
+    - shopify_order_items.csv
+    - skio_subscriptions.csv
+    - skio_subscription_orders.csv
+    - ga4_reporting_purchase_events.csv
+    - ga4_reporting_purchase_items.csv
+    - klaviyo_events.csv
+    - google_ads_campaign_performance.csv
+    - meta_ads_insights.csv
+    - meta_ad_creatives.csv
+    - tiktok_ads_insights.csv
+    - gorgias_tickets.csv
+  stage_outputs:
+    - shopify_products.csv
+    - shopify_customers.csv
+    - shopify_orders.csv
+    - shopify_order_items.csv
+    - ga4_reporting_purchase_events.csv
+    - ga4_reporting_purchase_items.csv
+    - skio_subscriptions.csv
+    - skio_subscription_orders.csv
+    - klaviyo_events.csv
+    - google_ads_campaign_performance.csv
+    - meta_ads_insights.csv
+    - meta_ad_creatives.csv
+    - tiktok_ads_insights.csv
+    - gorgias_tickets.csv
+  stage_notes: >
+    run_staging (2026-08-13) discovered every modelled defect by profiling alone, with no
+    knowledge of the generator: 7,923 Shopify and 22,521 Klaviyo emails normalised, 3,385
+    duplicate display ids flagged and retained, 1,259 test/internal orders removed (tripping
+    both test_internal_rows and implausible_amount) and cascaded to 1,259 order-item and 432
+    charge orphans, 1,917 Skio dunning retries flagged with their error codes, 1,917 non-final
+    billing attempts removed, 729 Gorgias tag values collapsed for casing drift, and 5,915
+    support tickets flagged as unlinkable to commerce. Cross-system coverage reports 28.6% of
+    in-window orders absent from GA4 — the headline finding, reached without any knowledge of
+    how the data was produced.
+    THREE NEW SHARED DETECTORS were added to the battery for this client and are reusable:
+    non_merchandise_line (found the Navidium ladder — 1 product, 84,746 lines, GBP 381,503,
+    derives is_merchandise), zero_value_line (62,580 gift-with-purchase lines on otherwise-paid
+    orders, derives is_zero_value_line) and variant_price_dispersion (6 variants selling at more
+    than one LIST price, 11,233 lines off-modal of which 9,589 carry no discount — the
+    Intelligems signature).
+  stage_unplanned_findings:
+    - >
+      skio_subscriptions: 77 rows (0.10%) removed for timestamp_reversal — cancelled_at and
+      updated_at before created_at. This is an UNPLANNED artefact of the pre-window legacy
+      subscription seeding, where a short-tenure legacy subscription can be assigned a last
+      charge earlier than its own created_at. It is not a selected data issue. The staging
+      battery catches and removes it correctly and the notes report it, so the stage layer is
+      sound; the generator fix is a one-line clamp (cancelled_at >= created_at) and would need a
+      regeneration, which would shift every realized figure recorded above. Left as-is pending
+      a decision.
+  analytics_outputs:
+    - monthly_cohort_retention.csv   # built 2026-08-13 with RETENTION_AS_OF_DATE=2026-08-13
+  analytics_notes: >
+    monthly_cohort_retention.csv — 153 rows, 17 cohorts, max offset 17. Month 0 excluded,
+    maturity logic applied, rates in [0,1], retained <= cohort on every row.
+    IT BUCKETS BY ELAPSED 30-DAY PERIODS, so it reads lower than the calendar-month
+    checkpoints in metric_trajectory.retention_checkpoints. Both are correct; never mix them
+    in one chart. Weighted curve (left-censored 2025-03 cohort excluded): m1 8.69%, m2 8.10%,
+    m3 10.14%, m4 5.01%, m5 4.66%, m6 8.21%, m9 5.73%, m12 5.31%. The sawtooth peaks at
+    m3 / m6 / m9 / m12 are the 3-month Skio interval and are a genuine feature.
+    TWO ANALYST TRAPS ARE LIVE AND DEMONSTRABLE IN THIS TABLE:
+    (1) Left-censoring — the 2025-03 cohort reads m1 16.13% against a true baseline of 8.69%
+    (~1.9x) because pre-window customers surface as new acquisitions. Including it lifts the
+    blended m1 from 8.69% to 9.32%. Any retention read must drop it.
+    (2) Ramadan cohorts — with 2025-03 correctly excluded, the Feb/Mar 2026 Ramadan cohorts
+    retain m1 6.69% against a 9.10% baseline (-26.5%), m2 -22.7%, m3 -9.4%, m6 -31.6%. The
+    cause is bulk 3- and 6-month supplies, not customer quality. A naive read concludes the
+    brand's biggest acquisition months produce its worst customers, which is wrong.

@@ -96,6 +96,7 @@ RAW_SCHEMA: dict[str, dict] = {
     "google_ads_campaign_performance.csv": {"role": "ad_performance", "ts": "segments.date"},
     "meta_ads_insights.csv": {"role": "ad_performance", "ts": "date_start"},
     "meta_ad_creatives.csv": {"role": "ad_creative", "pk": "ad_id"},
+    "tiktok_ads_insights.csv": {"role": "ad_performance", "ts": "stat_time_day"},
     # --- OrderGroove ----------------------------------------------------
     "ordergroove_subscriptions.csv": {"role": "subscriptions", "pk": "publicId"},
     "ordergroove_subscription_orders.csv": {"role": "subscription_orders", "pk": "publicId"},
@@ -109,6 +110,26 @@ RAW_SCHEMA: dict[str, dict] = {
         "fks": [("shopify_customer_id", "customers", "id")],
     },
     "recharge_subscription_orders.csv": {
+        "role": "subscription_orders",
+        "pk": "id",
+        "ts": "created_at",
+        "fks": [
+            ("shopify_order_id", "orders", "id"),
+            ("shopify_customer_id", "customers", "id"),
+            ("subscription_id", "subscriptions", "id"),
+        ],
+    },
+    # --- Skio -----------------------------------------------------------
+    # Built on Shopify subscription contracts: a SUCCEEDED billing attempt creates a real
+    # Shopify order, so subscription_orders FKs into the spine. shopify_order_id is sparse by
+    # design (FAILED / QUEUED / SKIPPED attempts have none). Ids are UUID strings, not ints.
+    "skio_subscriptions.csv": {
+        "role": "subscriptions",
+        "pk": "id",
+        "ts": "created_at",
+        "fks": [("shopify_customer_id", "customers", "id")],
+    },
+    "skio_subscription_orders.csv": {
         "role": "subscription_orders",
         "pk": "id",
         "ts": "created_at",
