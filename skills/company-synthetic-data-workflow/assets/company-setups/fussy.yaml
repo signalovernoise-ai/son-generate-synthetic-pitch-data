@@ -1,0 +1,914 @@
+company:
+  name: Fussy
+  website: https://www.getfussy.com/
+  generated_on: 2026-08-06
+  time_window:
+    historic_months: 18
+    future_months: 6
+    override_reason: Using the default 18 historic + 6 future window (2025-03-01 -> 2027-02-28). Brand has traded since 2020, so the window start does not predate launch. Window kept at 18 months because the subscription refill cadence (renewals at months 1, 4, 7, 10, 13) needs a long history for the cohort-retention story; volume is controlled by operational row scaling instead — see volume_plan.
+  primary_market: UK
+  currency: GBP
+  category: Personal care
+  subcategory: Refillable natural deodorant, body wash and hand wash
+  business_model: Subscription-led D2C replenishment (refills) with one-time purchases; omnichannel group with grocery/pharmacy retail listings that are out of scope here
+  confidence_note: >
+    Catalog, prices and range-launch dates are grounded in the live Shopify storefront
+    (products.json pulled 2026-08-06, 184 products with published_at dates). Source systems are
+    grounded in a site technology-profiler pass over the rendered homepage on 2026-08-06.
+    Commercial scale is a user-directed assumption: public reporting puts group run-rate above
+    £30m (Aug 2025) including Tesco/Sainsbury's/Waitrose/Boots retail, and the user directed a
+    D2C-only model at roughly £16-20m/yr. Market scope is user-directed UK-only even though the
+    store sells into ~30 countries and continental Europe is publicly reported at ~15% of group
+    revenue — see execution_plan.open_questions.
+
+source_time_windows:
+  default:
+    historic_months: 18
+    future_months: 6
+  overrides:
+    - system_name: Klaviyo
+      historic_months: 12
+      future_months: 6
+      rationale: Trim the email/SMS event stream to the last 12 historic months (from 2025-09-01) to control row volume while preserving the lifecycle story. Anchored to customers and orders.
+      anchor_to_tables:
+        - customers
+        - orders
+
+volume_plan:
+  estimated_raw_rows:
+    products: 130
+    orders: 406700
+    customers: 150000
+    order_items: 875000
+    crm_events: 520000          # klaviyo_events.csv, 12 historic + 6 future months
+    ga4_events: 189000          # web-checkout orders only; Recharge renewals bypass the pixel
+    ga4_event_items: 405000
+    subscriptions: 105000       # recharge_subscriptions.csv
+    subscription_orders: 224000 # recharge_subscription_orders.csv (charges)
+    ad_performance: 10200       # google_ads_campaign_performance.csv
+    support_tickets: 10200      # gorgias_tickets.csv
+    total: 2895000
+  threshold_total_raw_rows: 5000000
+  protected_dimensions:
+    - products
+  reduction_actions:
+    reduce_historic_window_to_months:
+    row_volume_scaling_factor: 0.20
+    rationale: >
+      At full modelled scale the business does ~2.03m orders across the 24-month window
+      (~85k orders/month at a ~£18 AOV), which projects to ~14.5m raw rows — far above the 5m
+      threshold. Cutting the historic window to 12 months only removes ~30% of that and would
+      still breach the threshold while destroying the cohort-retention depth this brand's story
+      depends on, so the window is kept at 18+6 and operational row volume is scaled to 0.20
+      instead. All commercial metrics, growth, seasonality, AOV, mix, retention and issue
+      prevalence are preserved: volume and revenue targets are compared at target x 0.20, and
+      rates (AOV, refund rate, subscription share, retention) are scale-invariant. Products are a
+      protected dimension and stay complete.
+
+research:
+  sources:
+    - https://www.getfussy.com/
+    - https://www.getfussy.com/products.json (184 products, pulled 2026-08-06)
+    - https://www.getfussy.com/pages/shop
+    - https://www.getfussy.com/pages/subscribe
+    - https://www.getfussy.com/pages/deodorant
+    - https://www.getfussy.com/pages/delivery-returns
+    - https://getfussy.gorgias.help/en-US/articles/shipping-delivery-and-returns-97528
+    - https://www.thegrocer.co.uk/news/fussy-raises-11m-from-crowd-to-boost-eco-friendly-personal-care-growth/672450.article
+    - https://theindustry.beauty/fussy-partners-with-tesco-for-first-retail-partnership/
+    - https://theindustry.beauty/the-interview-matt-kennedy-founder-ceo-of-fussy-2/
+    - Rendered-homepage technology-profiler pass, 2026-08-06 (script tags, checkout domains, Shopify app extensions, tag ids)
+  summary: >
+    Fussy is a UK D2C personal-care brand selling refillable natural deodorant plus body wash and
+    hand wash, on Shopify. The model is a durable case bought once plus plastic-free refills bought
+    forever: a Subscribe & Save starter pack (case + 1 refill, £15) followed a month later by a
+    rolling 3-monthly supply of 3 refills at ~£5 each (£15/delivery, ~17% below the £18 one-time
+    3-pack and ~25% below buying singles at £6). That cadence — renewals at months 1, 4, 7, 10, 13 —
+    is the defining shape of the retention curve. Founded 2020, Dragons' Den investment from Deborah
+    Meaden and Peter Jones (Feb 2022), £1.1m crowdfund at a £6.2m valuation, further VC from Guinness
+    Ventures and Velocity (Mar 2024, Mar 2025). Group run-rate reported above £30m by Aug 2025 with
+    listings in Tesco, Sainsbury's, Waitrose, Boots, Superdrug and Holland & Barrett; this dataset
+    models the D2C store only. Range expansion is the main in-window growth driver: body wash went
+    live 2025-08-20 and hand wash 2025-11-20, both evidenced by products.json published_at dates.
+  product_catalog:
+    hero_products:
+      - Deodorant Starter Pack (case + refill)
+      - Deodorant Refill Pack (3 refills)
+      - Body Wash Starter Pack
+      - Hand Wash Starter Pack
+      - Mini Trio Pack
+    current_products:
+      - name: Deodorant Starter Pack (case + 1 refill)
+        current_price: 15.00
+        currency: GBP
+        product_url: https://www.getfussy.com/pages/deodorant
+        evidence_notes: products.json 2026-08-06 — core scent starter packs (Wavy Days, Tropic Tonic, Coconut Milk, Lavender Fields, Wilderness, Ocean Blue, Mint Green, Road Trip, All at Sea, Sugar Crush, Wide Eyed) all at £15.00.
+      - name: Sensitive Starter Pack
+        current_price: 15.00
+        currency: GBP
+        product_url: https://www.getfussy.com/products/sensitive-skin-natural-deodorant
+        evidence_notes: products.json 2026-08-06; sensitive variants at £15.00, limited-edition sensitive at £17.00.
+      - name: Limited-edition Starter Pack (Brazilian Summer — Mango Mood, Sweet Escape, After Sun)
+        current_price: 17.00
+        currency: GBP
+        product_url: https://www.getfussy.com/pages/most-loved-scents-collection
+        evidence_notes: products.json 2026-08-06, published_at 2026-05-18; limited-edition premium over the £15 core starter.
+      - name: Deodorant Refill Pack (3 refills)
+        current_price: 18.00
+        currency: GBP
+        product_url: https://www.getfussy.com/collections/refill-packs
+        evidence_notes: products.json 2026-08-06 — Fresh / Variety / Most Loved / scent refill packs at £18.00.
+      - name: Deodorant Refill (single)
+        current_price: 6.00
+        currency: GBP
+        product_url: https://www.getfussy.com/products/refills
+        evidence_notes: products.json 2026-08-06, product_type "Refills" at £6.00. Subscription price ~£5.00.
+      - name: Deodorant Case
+        current_price: 10.00
+        currency: GBP
+        product_url: https://www.getfussy.com/
+        evidence_notes: products.json 2026-08-06 — colour cases (Ocean Blue, Mint Green, Blush, Midnight, Orange) at £10.00; Outer Case £8.00.
+      - name: Scent Pack (case + 3 refills)
+        current_price: 30.00
+        currency: GBP
+        product_url: https://www.getfussy.com/pages/shop
+        evidence_notes: products.json 2026-08-06 — core scent packs £30.00; limited-edition scent packs £28.00.
+      - name: Mini Trio Pack
+        current_price: 10.00
+        currency: GBP
+        product_url: https://www.getfussy.com/pages/shop
+        evidence_notes: products.json 2026-08-06; 16 mini trio SKUs at £10.00, first published 2024-09-03.
+      - name: Body Wash Starter Pack
+        current_price: 19.00
+        currency: GBP
+        product_url: https://www.getfussy.com/pages/shop
+        evidence_notes: products.json 2026-08-06 — body wash starter packs at £19.00; range first published 2025-08-20.
+      - name: Body Wash Refill Pack
+        current_price: 21.00
+        currency: GBP
+        product_url: https://www.getfussy.com/pages/shop
+        evidence_notes: products.json 2026-08-06, product_type "Body Wash Refills" £21.00 (pack) / £7.00 (single).
+      - name: Body Wash Bottle
+        current_price: 12.00
+        currency: GBP
+        product_url: https://www.getfussy.com/pages/shop
+        evidence_notes: products.json 2026-08-06, product_type "Bottle" £12.00.
+      - name: Hand Wash Bottle
+        current_price: 10.00
+        currency: GBP
+        product_url: https://www.getfussy.com/pages/shop
+        evidence_notes: products.json 2026-08-06, product_type "Bottle" £10.00; range first published 2025-11-20.
+      - name: Hand Wash Refill Pack
+        current_price: 18.00
+        currency: GBP
+        product_url: https://www.getfussy.com/pages/shop
+        evidence_notes: products.json 2026-08-06, product_type "Hand Wash Refills" £18.00 (pack) / £6.00 (single); first published 2025-12-11.
+      - name: Natural Body Bar Pack
+        current_price: 12.00
+        currency: GBP
+        product_url: https://www.getfussy.com/pages/shop
+        evidence_notes: products.json 2026-08-06, product_type "Add ons", first published 2023-10-18.
+      - name: Fussy Gift Card
+        current_price: 20.00
+        currency: GBP
+        product_url: https://www.getfussy.com/products/fussy-gift-card-20
+        evidence_notes: products.json 2026-08-06 — gift cards at £5 / £10 / £15 / £20.
+    historic_or_delisted_products:
+      - name: Lost Claus Starter Pack (retired Christmas 2025 limited edition)
+        inferred_price: 17.00
+        rationale: Lost Claus exists in the live catalog as a mini trio; modelled as a seasonal starter/refill pack retired after Dec 2025, adjacent to the current limited-edition price architecture.
+      - name: Recycled Washbag
+        inferred_price: 10.00
+        rationale: Present in products.json since 2021 as a low-volume accessory; modelled as a delisted add-on from mid-2026.
+      - name: Original Outer Case (pre-2025 case design)
+        inferred_price: 8.00
+        rationale: products.json still carries "Outer Case" at £8.00 alongside the £10.00 colour cases; modelled as the legacy case SKU phased out during the window.
+    price_points:
+      - 6.00
+      - 8.00
+      - 10.00
+      - 12.00
+      - 15.00
+      - 17.00
+      - 18.00
+      - 19.00
+      - 21.00
+      - 28.00
+      - 30.00
+    bundles:
+      - Starter Pack (case + refill)
+      - Scent Pack (case + 3 refills)
+      - Refill Pack (3 refills)
+      - Mini Trio Pack
+    subscription: available
+    subscription_platform: Recharge
+    subscription_modeling: >
+      Modelled as a first-class Recharge source (subscriptions + charge-level subscription orders)
+      that references the Shopify order the charge created, plus selling-plan fields on the Shopify
+      line items. Cadence: starter pack, first refill delivery ~1 month later, then a rolling
+      3-monthly 3-refill supply — renewals land at months 1, 4, 7, 10, 13 from the first order.
+    promotions:
+      - offer_name: Subscribe & Save
+        offer_type: Subscription discount
+        details: Refills at ~£5.00 each on subscription (£15.00 per 3-refill delivery) vs £18.00 one-time and £6.00 as singles — ~17% off the pack, marketed as "over 25%" vs buying singles. Free UK shipping on the initial Subscribe & Save starter (case + refill).
+        evidence_source: https://www.getfussy.com/pages/subscribe and https://www.getfussy.com/pages/deodorant
+      - offer_name: Black Friday / Cyber Week
+        offer_type: Sitewide seasonal discount
+        details: Modelled as the sharpest trading window of the year (Nov seasonality 1.12x vs the mean month) with realised AOV depressed ~4.5% by discounting. Assumption grounded in category norms, not a captured 2025 banner.
+        evidence_source: assumption (category norm; not observed on-site in Aug 2026)
+      - offer_name: Brazilian Summer limited edition
+        offer_type: Limited-edition range
+        details: Limited-edition scents (Mango Mood, Sweet Escape, After Sun) live from 2026-05-18 at a £17 starter / £18 refill pack / £28 scent pack premium; banner "SHOP OUR LIMITED EDITION SCENTS" live on the homepage 2026-08-06. Modelled as a summer AOV lift, not an extra volume lift.
+        evidence_source: https://www.getfussy.com/ and products.json published_at 2026-05-18
+      - offer_name: Refer a Friend
+        offer_type: Referral credit
+        details: A Refer a Friend link sits in the site navigation; modelled as a small referral-attributed share of new customers with a first-order credit.
+        evidence_source: https://www.getfussy.com/ (main navigation)
+    delivery_pricing:
+      free_delivery_threshold:
+      delivery_policy_summary: >
+        No spend-based free-delivery threshold. UK delivery is charged as a low flat fee — ~£1.00 on
+        subscription refill-only deliveries and ~£1.99 on other orders — with free UK shipping on the
+        initial Subscribe & Save starter pack. Because shipping is a flat fee rather than a threshold,
+        there is no basket-bunching effect to model. Shipping is excluded from AOV and revenue per
+        references/metric-definitions.md, but is still populated on the Shopify order so that the GA4
+        revenue-definition mismatch (see data_issues) is real and reconcilable.
+      evidence_source: https://getfussy.gorgias.help/en-US/articles/shipping-delivery-and-returns-97528 and https://www.getfussy.com/pages/subscribe
+  commercial_assumptions:
+    annual_revenue_assumption: 18000000
+    annual_growth_rates:
+      - period: FY_Mar2026_Feb2027_vs_FY_Mar2025_Feb2026
+        growth_rate: 1.26
+    monthly_orders_assumption: 91800
+    aov_assumption: 18.54
+    growth_trend: >
+      Steady D2C compounding (~1.0% per month underlying) rather than hypergrowth, on top of three
+      evidenced step changes: body wash (2025-09), hand wash (2025-12) and the Brazilian Summer
+      limited edition (2026-06). Group growth is increasingly retail-led, so the D2C store grows
+      more slowly than the group.
+    repeat_rate_range: repeat order-share ~0.68-0.71; subscription order-share ~0.62 rising to ~0.68 (renewals alone ~0.52 of orders); Subscribe & Save take-rate ~0.50 of first orders; ~3.5 renewals per subscriber; ~3.3 orders per active customer over the 24-month window
+    refund_rate_range: 0.018-0.026
+    scale_note: >
+      User-directed D2C-only scale. FY Mar2025-Feb2026 £16.1m, FY Mar2026-Feb2027 £20.4m (+26%),
+      trailing-12m to Aug 2026 ~£18.0m — inside the approved £16-20m/yr band and consistent with a
+      >£30m group run-rate where retail carries the balance. Generated CSVs carry 20% of these
+      volumes (see volume_plan.reduction_actions.row_volume_scaling_factor).
+  metric_trajectory:
+    annual_revenue_by_year:
+      - year: FY_Mar2025_Feb2026
+        revenue: 16149000
+      - year: FY_Mar2026_Feb2027
+        revenue: 20367000
+    revenue_by_period:
+      - period: 2025-03
+        revenue: 1126000
+      - period: 2025-04
+        revenue: 1177000
+      - period: 2025-05
+        revenue: 1282000
+      - period: 2025-06
+        revenue: 1348000
+      - period: 2025-07
+        revenue: 1391000
+      - period: 2025-08
+        revenue: 1287000
+      - period: 2025-09
+        revenue: 1273000
+      - period: 2025-10
+        revenue: 1330000
+      - period: 2025-11
+        revenue: 1507000
+      - period: 2025-12
+        revenue: 1481000
+      - period: 2026-01
+        revenue: 1567000
+      - period: 2026-02
+        revenue: 1381000
+      - period: 2026-03
+        revenue: 1443000
+      - period: 2026-04
+        revenue: 1508000
+      - period: 2026-05
+        revenue: 1643000
+      - period: 2026-06
+        revenue: 1780000
+      - period: 2026-07
+        revenue: 1837000
+      - period: 2026-08
+        revenue: 1702000
+      - period: 2026-09
+        revenue: 1589000
+      - period: 2026-10
+        revenue: 1661000
+      - period: 2026-11
+        revenue: 1882000
+      - period: 2026-12
+        revenue: 1779000
+      - period: 2027-01
+        revenue: 1883000
+      - period: 2027-02
+        revenue: 1661000
+    orders_by_period:
+      - period: 2025-03
+        orders: 67000
+      - period: 2025-04
+        orders: 69800
+      - period: 2025-05
+        orders: 74700
+      - period: 2025-06
+        orders: 78300
+      - period: 2025-07
+        orders: 80500
+      - period: 2025-08
+        orders: 75400
+      - period: 2025-09
+        orders: 72800
+      - period: 2025-10
+        orders: 75800
+      - period: 2025-11
+        orders: 89700
+      - period: 2025-12
+        orders: 84000
+      - period: 2026-01
+        orders: 87300
+      - period: 2026-02
+        orders: 76700
+      - period: 2026-03
+        orders: 79900
+      - period: 2026-04
+        orders: 83200
+      - period: 2026-05
+        orders: 89100
+      - period: 2026-06
+        orders: 95200
+      - period: 2026-07
+        orders: 97900
+      - period: 2026-08
+        orders: 91800
+      - period: 2026-09
+        orders: 85500
+      - period: 2026-10
+        orders: 89100
+      - period: 2026-11
+        orders: 105400
+      - period: 2026-12
+        orders: 96300
+      - period: 2027-01
+        orders: 100100
+      - period: 2027-02
+        orders: 88000
+    aov_by_period:
+      - period: 2025-03
+        aov: 16.80
+      - period: 2025-04
+        aov: 16.86
+      - period: 2025-05
+        aov: 17.16
+      - period: 2025-06
+        aov: 17.22
+      - period: 2025-07
+        aov: 17.28
+      - period: 2025-08
+        aov: 17.07
+      - period: 2025-09
+        aov: 17.48
+      - period: 2025-10
+        aov: 17.54
+      - period: 2025-11
+        aov: 16.80
+      - period: 2025-12
+        aov: 17.63
+      - period: 2026-01
+        aov: 17.95
+      - period: 2026-02
+        aov: 18.01
+      - period: 2026-03
+        aov: 18.06
+      - period: 2026-04
+        aov: 18.12
+      - period: 2026-05
+        aov: 18.44
+      - period: 2026-06
+        aov: 18.70
+      - period: 2026-07
+        aov: 18.76
+      - period: 2026-08
+        aov: 18.54
+      - period: 2026-09
+        aov: 18.59
+      - period: 2026-10
+        aov: 18.64
+      - period: 2026-11
+        aov: 17.86
+      - period: 2026-12
+        aov: 18.47
+      - period: 2027-01
+        aov: 18.81
+      - period: 2027-02
+        aov: 18.87
+    repeat_rate_by_period:
+      - period: 2025-H2
+        repeat_share: 0.66
+      - period: 2026-H1
+        repeat_share: 0.68
+      - period: 2026-H2
+        repeat_share: 0.70
+      - period: 2027-H1
+        repeat_share: 0.70
+    refund_rate_by_period:
+      - period: baseline
+        refund_rate: 0.020
+      - period: promo_window
+        refund_rate: 0.026
+    # Subscription cadence dominates the curve: the Subscribe & Save starter is followed by a
+    # refill delivery ~1 month later, then a rolling 3-monthly supply. Renewal months are
+    # 1, 4, 7, 10, 13; the months in between carry only a one-time-repeat floor (~4-5%). The
+    # resulting sawtooth is a real feature of this business, not noise.
+    #
+    # These figures are the internally consistent solution of the order-mix identity
+    #   1 = new_share x (1 + take_rate x renewals_per_subscriber) + adhoc_repeat_share
+    # at take_rate 0.50, renewals per subscriber ~3.3 and adhoc repeat share 0.16. Renewal
+    # survival is 0.86 to the first refill delivery then 0.80 / 0.78 / 0.70 / 0.70 per cycle.
+    # Values below are REALIZED from the generated data (cohorts 2025-04..2026-02), not a
+    # pre-generation guess: the first draft's checkpoints could not be reconciled with the
+    # documented new/repeat and subscription mix and were corrected here.
+    retention_checkpoints:
+      m1: 0.337
+      m3: 0.117
+      m6: 0.089
+      m12: 0.053
+    retention_cadence_months:
+      m4: 0.272
+      m7: 0.216
+      m10: 0.156
+      m13: 0.105
+    retention_shape_notes:
+      - Non-cadence months carry a decaying one-time-repeat floor of ~0.024 -> ~0.018.
+      - A secondary bump at m3 / m6 / m9 (0.12 / 0.09 / 0.07) comes from renewals rescheduled a month early or late, which is genuine Recharge skip/delay behaviour rather than noise.
+      - >
+        Two definitions give two curves and both are correct. The checkpoints above use a
+        CALENDAR-MONTH offset. The monthly_cohort_retention analytics output buckets by
+        ELAPSED 30-DAY PERIODS from the exact first-order timestamp, which splits the ~30-day
+        first refill delivery across buckets 0 and 1 and discards bucket 0 — so it reads lower:
+        m1 0.214, m4 0.215, m7 0.178, m10 0.131, m13 0.086, with troughs of 0.02-0.04 between.
+        Quote whichever definition the audience expects, but never mix them in one chart.
+    new_vs_repeat_mix_by_period:
+      - period: 2025-H2
+        new_share: 0.32
+        repeat_share: 0.68
+      - period: 2026-H1
+        new_share: 0.30
+        repeat_share: 0.70
+      - period: 2026-H2
+        new_share: 0.29
+        repeat_share: 0.71
+      - period: 2027-H1
+        new_share: 0.29
+        repeat_share: 0.71
+    subscription_share_by_period:
+      - period: 2025-H2
+        subscription_order_share: 0.62
+      - period: 2026-H1
+        subscription_order_share: 0.65
+      - period: 2026-H2
+        subscription_order_share: 0.67
+      - period: 2027-H1
+        subscription_order_share: 0.68
+    acquisition_channel_mix:
+      - channel: Paid Social
+        share: 0.28
+      - channel: Paid Search
+        share: 0.20
+      - channel: Organic Search
+        share: 0.13
+      - channel: Direct
+        share: 0.12
+      - channel: Email
+        share: 0.10
+      - channel: Affiliate
+        share: 0.07
+      - channel: Referral
+        share: 0.02
+      - channel: Unassigned
+        share: 0.08
+    seasonality_notes:
+      - >
+        Seasonality is BAKED INTO orders_by_period, not applied as a separate multiplier layer by
+        the generator. The multipliers below are documentation of the shape already present in the
+        monthly path — the generator pins order counts to orders_by_period.
+      - Normalised monthly multipliers (mean 1.000) — Jan 1.039, Feb 0.905, Mar 0.933, Apr 0.962, May 1.020, Jun 1.059, Jul 1.078, Aug 1.001, Sep 0.924, Oct 0.953, Nov 1.116, Dec 1.010.
+      - Summer (Jun-Jul) is the deodorant demand peak; November is the Black Friday trading peak with depressed realised AOV; February and September are the troughs.
+      - The subscription base damps amplitude — renewals are contractual, so seasonality mostly moves new-customer acquisition.
+    inflection_points:
+      - date: 2025-08-20
+        metric: category_expansion_body_wash
+        expected_change: Body wash range goes live. From 2025-09 the monthly order path steps up ~3.5% and AOV steps up ~£0.35 as body wash starter packs (£19) and refill packs (£21) enter the mix.
+        rationale: products.json published_at for the first Body Wash Refills and Bottles is 2025-08-20.
+      - date: 2025-11-20
+        metric: category_expansion_hand_wash
+        expected_change: Hand wash range goes live (bottles 2025-11-20, refill packs 2025-12-11). From 2025-12 the order path steps up a further ~2.5% and AOV a further ~£0.25.
+        rationale: products.json published_at for the first Hand Wash Bottle is 2025-11-20 and Hand Wash Refills 2025-12-11.
+      - date: 2026-05-18
+        metric: limited_edition_launch
+        expected_change: Brazilian Summer limited edition (Mango Mood, Sweet Escape, After Sun) at a £17/£18/£28 premium. From 2026-06 the order path steps up ~2% and AOV a further ~£0.20; summer months carry a +1.5% AOV mix effect.
+        rationale: products.json published_at 2026-05-18 and the live homepage banner on 2026-08-06.
+      - date: 2025-11-24
+        metric: channel_attribution_break
+        expected_change: GA4 Unassigned share rises from the ~8% baseline to ~22% for ~8 days during the Black Friday tag/consent changes, then returns to baseline.
+        rationale: CookieYes consent management plus GTM and the Littledata Shopify tracker are all live on-site; a Cyber Week tagging change is the most believable cause of a tracking gap.
+      - date: 2026-04-13
+        metric: channel_attribution_break
+        expected_change: Second, shorter Unassigned spike to ~20% for ~7 days.
+        rationale: Consent-mode / Littledata tracker reconfiguration; keeps breaks sparse and plausible per references/channel-mix-benchmarks.md.
+  seasonality:
+    peak_periods:
+      - June
+      - July
+      - November
+    low_periods:
+      - February
+      - September
+    category_dynamics:
+      - Deodorant demand peaks with UK summer temperatures; body wash and hand wash are flatter and slightly winter-weighted, so the range expansion damps overall amplitude from 2026.
+      - Black Friday is the single sharpest acquisition window for D2C personal care, and it recruits a discount-led cohort with weaker downstream repeat behaviour.
+      - Refill replenishment is contractual on a 3-monthly cadence, so a large share of monthly volume is insensitive to season.
+
+source_systems:
+  confirmed:
+    - name: Shopify
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://www.getfussy.com/products.json
+        - https://www.getfussy.com/ (cdn.shopify.com, shop.app/checkouts, web-pixels-manager, store handle we-are-fussy.myshopify.com)
+      evidence_notes: Live products.json returns 184 products; rendered homepage carries cdn.shopify.com asset and extension URLs, the Shopify checkout domain and the store handle we-are-fussy.myshopify.com. Profiler pass 2026-08-06.
+      domain: commerce
+      export_shape: standard connector schema
+      platform_resources:
+        - products
+        - orders
+        - customers
+        - order_items
+      join_keys:
+        - product_id
+        - variant_id
+        - order_id
+        - customer_id
+      schema_basis: official documentation
+      schema_notes: Subscription context carried on line items via selling-plan fields; order-level subscription status comes from the Recharge extracts, not a Shopify boolean.
+      known_limitations:
+        - Retail (Tesco, Sainsbury's, Waitrose, Boots) sell-through never reaches Shopify and is out of scope for this dataset.
+    - name: Recharge
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://www.getfussy.com/ (checkout.rechargeapps.com present in the storefront checkout-domain allowlist)
+        - https://www.getfussy.com/pages/subscribe
+      evidence_notes: checkout.rechargeapps.com appears in the rendered storefront's checkout-domain configuration, which is how a Recharge-powered subscription checkout is wired. Corroborated by the Subscribe & Save mechanics on /pages/subscribe. Profiler pass 2026-08-06.
+      domain: subscriptions
+      export_shape: standard connector schema
+      platform_resources:
+        - subscriptions
+        - charges
+      join_keys:
+        - shopify_customer_id
+        - shopify_order_id
+        - subscription_id
+        - charge_id
+      schema_basis: official documentation
+      schema_notes: NEW standard source for this repo — see references/standard-source-schemas/recharge.md. Charges reference the Shopify order they created, which is what makes the "renewals bypass GA4" gap provable.
+      known_limitations:
+        - Cancellation/churn state is recorded when the customer acts in the portal, which can lag the last billed charge (modelled as a data issue).
+    - name: Klaviyo
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://www.getfussy.com/ (static.klaviyo.com/onsite script)
+      evidence_notes: static.klaviyo.com/onsite is loaded directly in the rendered homepage — unambiguous first-party detection. No competing ESP (Bloomreach, Customer.io, Attentive, Postscript) detected. Profiler pass 2026-08-06.
+      domain: lifecycle
+      export_shape: events_api
+      platform_resources:
+        - email_events
+        - sms_events
+      join_keys:
+        - email
+        - profile_id
+      schema_basis: official documentation
+      schema_notes: Single event-per-row stream (klaviyo_events.csv); metric_name names the action. Trimmed to 12 historic months (from 2025-09-01).
+      known_limitations:
+        - Placed Order events carry no reliable Shopify order id, so the link to commerce is soft (email + $value + timestamp), not a hard FK.
+    - name: GA4
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://www.getfussy.com/ (measurement id G-EENVJ92ML3, container GTM-5D4WR9P, Littledata Shopify tracker extension)
+      evidence_notes: GA4 measurement id, GTM container and the Littledata server-side Shopify tracker (littledata-shopify-tracker-142 app extension) all present in the rendered homepage. Profiler pass 2026-08-06.
+      domain: web_analytics
+      export_shape: reporting_api
+      platform_resources:
+        - purchase_events
+        - purchase_items
+      join_keys:
+        - transactionId
+      schema_basis: official documentation
+      schema_notes: Reporting/Data API schema, not the BigQuery export. Covers web checkouts only — Recharge renewals are created server-side and do not fire a web purchase event.
+      known_limitations:
+        - purchaseRevenue is reported shipping- and tax-inclusive, which does not match the Shopify AOV convention (modelled as a data issue).
+    - name: Google Ads
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://www.getfussy.com/ (conversion tag AW-621884946; Littledata colibrius-aw.js Google Ads tracker extension)
+      evidence_notes: Google Ads conversion tag id and a dedicated Littledata Google Ads tracker asset are both present in the rendered homepage. Profiler pass 2026-08-06.
+      domain: paid_media
+      export_shape: googleads_api
+      platform_resources:
+        - campaign_performance
+      join_keys:
+        - campaign_id
+      schema_basis: official documentation
+      schema_notes: Daily campaign-level GAQL performance across SEARCH / SHOPPING / PERFORMANCE_MAX / DEMAND_GEN. Full 24-month window.
+      known_limitations:
+        - Aggregate daily fact; no join to individual commerce orders.
+    - name: Gorgias
+      confirmation_source: technology_profiler
+      evidence_links:
+        - https://www.getfussy.com/ (config.gorgias.chat bundle loader, shop=we-are-fussy.myshopify.com)
+        - https://getfussy.gorgias.help/en-US
+      evidence_notes: Gorgias chat bundle loader is embedded in the rendered homepage and the brand's public help centre is hosted on getfussy.gorgias.help. No Zendesk/Intercom signature found. Profiler pass 2026-08-06.
+      domain: support
+      export_shape: standard connector schema
+      platform_resources:
+        - tickets
+      join_keys:
+        - customer_email
+        - shopify_order_id
+      schema_basis: official documentation
+      schema_notes: NEW standard source for this repo — see references/standard-source-schemas/gorgias.md.
+      known_limitations:
+        - Order linkage is agent-applied and therefore incomplete (modelled as a data issue).
+  open_questions:
+    - Meta Ads — no Meta pixel found in the rendered homepage; it may be configured server-side inside Shopify's web-pixels sandbox. User directed that it be left out of generation and recorded here. If the client confirms a Meta account, add meta_ads_insights.csv and meta_ad_creatives.csv in a later pass.
+    - Market scope — user directed UK-only, but the store runs Shopify Markets across ~30 countries (GBP/EUR/USD/AUD/CAD and more) and continental Europe is publicly reported at ~15% of group revenue. The generated dataset will therefore understate the real international mix. Revisit if the pitch needs the multi-currency story.
+    - Also detected on-site but not modelled as source systems: Littledata (tracking middleware, not a reportable source), Trustpilot (reviews), Hotjar and Microsoft Clarity (behavioural analytics), CookieYes (consent), AfterSell and UpCart (checkout/cart apps), Zapiet (delivery scheduling). Confirm with the client whether any are wanted before a later phase.
+    - Retail EPOS / sell-through (Tesco, Sainsbury's, Waitrose, Boots, Superdrug, Holland & Barrett) is explicitly out of scope; the group's >£30m run-rate cannot be reconciled from this dataset alone.
+
+standardization:
+  canonical_tables:
+    - users
+    - orders
+  mapping_notes:
+    - No stage or analytics outputs until raw source outputs are generated, validated, and reviewed.
+    - Recharge subscriptions/charges clean into the shared subscriptions / subscription_orders roles alongside the existing OrderGroove specs.
+    - Gorgias tickets clean into the shared support_tickets role alongside the existing Zendesk spec.
+    - Google Ads cleans into the shared ad_performance metric vocabulary (spend derived from cost_micros).
+
+data_issues:
+  selected:
+    - issue: Email casing or whitespace drift
+      severity: low
+      expected_prevalence: 1.5-3% of Shopify customer and Klaviyo profile email records
+      check: email_casing_or_whitespace_drift
+      expected_prevalence_range: [0.015, 0.030]
+      affected_systems:
+        - Shopify
+        - Klaviyo
+        - Gorgias
+      visibility: subtle
+      rationale: Email is the join key between commerce, the ESP and the helpdesk, so casing/whitespace drift is the single most common identity-normalisation problem for a Shopify + Klaviyo + Gorgias stack.
+      notes: Lower/trim normalisation reconciles it in staging.
+    - issue: Near-duplicate orders from subscription billing retries
+      severity: low
+      expected_prevalence: 0.2-0.6% of orders carry a duplicate-looking order name; underlying id stays unique
+      check: near_duplicate_orders
+      expected_prevalence_range: [0.002, 0.006]
+      affected_systems:
+        - Shopify
+        - Recharge
+      visibility: subtle
+      rationale: Recharge retries failed charges and replays webhooks, which is exactly how duplicate-looking order names appear in a subscription-led Shopify store. Higher prevalence than a one-off-purchase brand because ~55% of orders are recurring charges.
+      notes: Duplicate display name only — the Shopify order id remains unique, so the PK check must still pass.
+    - issue: Channel tracking breaks around consent and tag changes
+      severity: medium
+      expected_prevalence: Baseline ~8% Unassigned; two windows at ~20-22% for 7-8 days (2025-11-24, 2026-04-13)
+      check: channel_tracking_break
+      expected_prevalence_range: [0.18, 0.25]
+      affected_systems:
+        - GA4
+      visibility: obvious
+      rationale: CookieYes consent management, GTM and the Littledata tracker are all live; a Cyber Week tagging change and a later consent-mode reconfiguration are the most believable causes of attribution gaps.
+      notes: One structural unattributed floor only — do not stack a second random (not set) path on top. See references/channel-mix-benchmarks.md.
+    - issue: Subscription renewals bypass GA4 entirely
+      severity: high
+      expected_prevalence: realized 48.8% of orders absent from GA4 — 92.0% of Recharge renewals (renewals are 49.1% of orders) plus 7.2% web tag/consent loss on the remaining web checkouts; GA4 sees 55.2% of Shopify revenue
+      affected_systems:
+        - GA4
+        - Recharge
+        - Shopify
+      visibility: subtle
+      rationale: >
+        Recharge recurring charges are created server-side with no browser session, so they never
+        fire a GA4 web purchase event. First orders and one-time repeats are genuine web checkouts
+        (~93% captured). This is the headline pitch insight for Fussy — GA4 alone sees roughly
+        two-fifths of revenue, badly understates retention and LTV, and would over-credit paid
+        acquisition if renewals were attributed to a channel.
+      notes: >
+        MANUAL. Signature — orders present in recharge_subscription_orders.shopify_order_id but
+        absent from ga4_reporting_purchase_events.transactionId. The small share of renewals that do
+        appear carry Direct / (not set), never a paid channel.
+    - issue: Recharge cancellation lag versus last billed charge
+      severity: medium
+      expected_prevalence: realized 15.0% of cancelled subscriptions (median lag 12 days, lagged tail 38-95 days)
+      affected_systems:
+        - Recharge
+        - Klaviyo
+      visibility: hidden_until_standardization
+      rationale: Customers stop paying attention before they cancel in the portal, so cancelled_at often sits weeks after the final successful charge — naive churn dating using cancelled_at overstates tenure.
+      notes: MANUAL. Signature — cancelled_at more than 35 days after the subscription's last charge date.
+    - issue: Support tickets inconsistently linked to orders
+      severity: medium
+      expected_prevalence: realized 34.7% of tickets have no order id; 8.0% have no resolvable customer; every populated id resolves
+      affected_systems:
+        - Gorgias
+      visibility: obvious
+      rationale: Order linkage in Gorgias is agent-applied rather than automatic, and chat/social tickets frequently arrive with an unrecognised email, so support volume cannot be joined cleanly to commerce without an email fallback.
+      notes: MANUAL. Signature — blank shopify_order_id on ~35% of tickets; blank/unmatched requester email on ~8%. Populated ids must still reference real orders — no orphans.
+    - issue: Revenue definition mismatch between GA4 and Shopify
+      severity: medium
+      expected_prevalence: Every GA4 purchase row — realized mean gap £1.30, equal to the order's shipping on 100% of rows and one-directional
+      affected_systems:
+        - GA4
+        - Shopify
+      visibility: hidden_until_standardization
+      rationale: GA4 purchaseRevenue is reported shipping-inclusive while the Shopify AOV convention excludes shipping, so the two systems disagree on revenue by roughly the flat £1.00-£1.99 delivery fee per order — about 6-11% on a £18 basket, which is large enough to look like a real data-quality incident.
+      notes: MANUAL. Signature — ga4 purchaseRevenue minus shopify total_price equals the order's shipping amount (plus rounding), consistently and in one direction.
+    - issue: Test and internal orders in the production extract
+      severity: low
+      expected_prevalence: realized 0.211% of orders (860 of 406,700), all £0.00 and all @getfussy.com
+      affected_systems:
+        - Shopify
+      visibility: obvious
+      rationale: Staff testing and 100%-discount internal codes leave zero-total and @getfussy.com orders in the live export — routine for a brand that ships frequent limited-edition launches.
+      notes: MANUAL. Signature — total_price of 0.00 and/or internal email domains and test-pattern names; removed by the staging test-pattern battery.
+    - issue: Left-censored first cohort at the window edge
+      severity: medium
+      expected_prevalence: ~40,500 of ~182,000 customers were already trading before the window; the 2025-03 cohort is ~23% larger than 2025-04
+      affected_systems:
+        - Shopify
+        - Recharge
+      visibility: hidden_until_standardization
+      rationale: >
+        Any windowed export makes long-standing customers look like new acquisitions in the first
+        month, because their real first order sits before the extract starts. Cohort retention
+        computed naively therefore shows an oversized, badly-behaved first cohort. Customers who
+        pre-date the window carry a "legacy" tag and a created_at before 2025-03-01, so an analyst
+        can find it — but only if they look.
+      notes: >
+        MANUAL. Signature — the 2025-03 first-order cohort is 13,299 customers against 10,841 in
+        2025-04; those customers have created_at before the window start and, for subscribers, a
+        recharge_subscriptions.created_at before it too.
+    - issue: Promo-acquired cohort quality shift
+      severity: medium
+      expected_prevalence: Concentrated in the Nov 2025 and Nov 2026 Black Friday cohorts
+      affected_systems:
+        - Shopify
+        - Recharge
+      visibility: hidden_until_standardization
+      rationale: Black Friday recruits discount-led buyers with lower first-order AOV, a lower Subscribe & Save take rate and weaker renewal survival than baseline cohorts — the retention story the pitch needs to be able to see.
+      notes: >
+        MANUAL. Realized signature — the 2025-11 first-order cohort has an AOV of £17.03 against
+        £19.39 in 2025-10 (-12%) and a Subscribe & Save take rate of 0.384 against 0.435 (-5pp);
+        2026-11 shows £16.21 vs £16.81 and 0.410 vs 0.474. Renewal survival for these cohorts is
+        additionally scaled by 0.94 per cycle.
+
+execution_plan:
+  approval_status: approved
+  current_phase: analytics_generation
+  scope_summary: >
+    Generate raw source-shaped datasets for the Fussy D2C store using a products-first dependency
+    model over an 18 historic + 6 future month window (2025-03-01 -> 2027-02-28), UK-only and GBP,
+    across Shopify, Recharge, GA4, Klaviyo, Google Ads and Gorgias. Operational row volume scaled to
+    0.20; products protected. Recharge and Gorgias are new standard source systems and need one
+    schema doc, one RAW_SCHEMA entry and one staging spec each, reusable by future clients.
+  approved_time_window:
+    historic_months: 18
+    future_months: 6
+    override_reason: Default window retained. Volume gating handled by row scaling rather than a window cut, because the 3-monthly refill cadence needs 18 months of history to show a cohort-retention curve.
+  catalog_and_promotion_summary: >
+    Ground the catalog to the live storefront — £15 starter packs, £17 limited-edition starters, £18
+    refill packs, £6 single refills, £10 cases, £30/£28 scent packs, £10 mini trios, £19/£21/£12 body
+    wash, £10/£18/£6 hand wash — plus three adjacent legacy SKUs. Model Subscribe & Save at ~£5 per
+    refill (£15 per 3-refill delivery), Black Friday as the sharpest trading window with depressed
+    AOV, and the Brazilian Summer limited edition from 2026-06 as an AOV lift. Flat delivery fee, no
+    free-delivery threshold, so no basket bunching.
+  metric_assumptions_summary: >
+    D2C-only scale: FY Mar2025-Feb2026 £16.1m, FY Mar2026-Feb2027 £20.4m (+26%), trailing-12m to Aug
+    2026 ~£18.0m. AOV £16.80 -> £18.87. Subscription order share 0.62 -> 0.68; repeat order share
+    0.68 -> 0.71; refunds 1.8-2.6%. Retention is a sawtooth driven by the 3-monthly refill cadence
+    (realized m1 0.34, m4 0.27, m7 0.22, m10 0.16, m13 0.11, non-cadence floor ~0.02).
+  volume_summary: >
+    Full-scale build projects ~14.5m raw rows, well above the 5m threshold. Historic window kept at
+    18 months; operational row volume scaled to 0.20, giving ~2.9m raw rows. Klaviyo additionally
+    capped by a 12 historic month source window. Products protected from scaling.
+  generation_sequence:
+    - step: generate_products
+      depends_on: []
+    - step: generate_orders
+      depends_on:
+        - generate_products
+    - step: generate_customers
+      depends_on:
+        - generate_orders
+        - generate_products
+    - step: generate_dependent_datasets
+      depends_on:
+        - generate_products
+        - generate_orders
+        - generate_customers
+  parallel_groups:
+    - name: downstream_raw_sources
+      members:
+        - shopify_order_items
+        - recharge_subscriptions
+        - recharge_subscription_orders
+        - ga4
+        - klaviyo
+        - google_ads
+        - gorgias
+      depends_on:
+        - generate_orders
+        - generate_customers
+        - generate_products
+  phase_gates:
+    - phase: source_generation
+      approval_required_before_next: true
+    - phase: stage_standardization
+      approval_required_before_next: true
+    - phase: analytics_generation
+      approval_required_before_next: false
+  consistency_checks:
+    - foreign_key_reconciliation
+    - timestamp_plausibility
+    - cross_system_entity_coverage
+  validation_tests:
+    - name: primary_key_uniqueness
+      threshold:
+        max_duplicates: 0
+    - name: foreign_key_reconciliation
+      threshold:
+        max_orphans: 0
+    - name: ga4_order_timestamp_alignment
+      threshold: 30_minutes
+    - name: modeling_window_bounds
+      threshold:
+        historic_months: 18
+        future_months: 6
+        window_start: 2025-03-01
+        window_end: 2027-02-28
+    - name: source_specific_window_bounds
+      threshold:
+        klaviyo_historic_months: 12
+        earliest_by_file:
+          klaviyo_events.csv: 2025-09-01
+          google_ads_campaign_performance.csv: 2025-03-01
+          gorgias_tickets.csv: 2025-03-01
+          recharge_subscription_orders.csv: 2025-03-01
+        # recharge_subscriptions.csv is deliberately absent: subscriptions that were already
+        # running when the window opens genuinely have a created_at before 2025-03-01.
+    - name: promotion_and_discount_consistency
+      threshold:
+        note: Monthly volume targets are promo-inclusive; validate promo effects on AOV/mix, not on monthly volume. See references/metric-definitions.md.
+    - name: metric_trajectory_alignment
+      threshold:
+        orders_pct: 3
+        revenue_pct: 6
+        aov_pct: 4
+  accepted_waivers: []
+  open_questions:
+    - Confirm whether Meta Ads is live before stage/analytics delivery; it is currently excluded on the evidence rule.
+    - Confirm the D2C share of group revenue with the client; £16-20m/yr is a user-directed assumption, not a published figure.
+    - UK-only scope understates the real ~15% continental Europe mix; confirm whether the pitch needs multi-market data.
+
+generation:
+  company_slug: fussy
+  output_workspace: ../synthetic_data
+  raw_extracts_to_build:
+    - shopify_products.csv
+    - shopify_orders.csv
+    - shopify_customers.csv
+    - shopify_order_items.csv
+    - recharge_subscriptions.csv
+    - recharge_subscription_orders.csv
+    - ga4_reporting_purchase_events.csv
+    - ga4_reporting_purchase_items.csv
+    - klaviyo_events.csv
+    - google_ads_campaign_performance.csv
+    - gorgias_tickets.csv
+  stage_outputs:
+    - users.csv
+    - orders.csv
+  analytics_outputs:
+    - monthly_cohort_retention.csv   # built 2026-08-06 with RETENTION_AS_OF_DATE=2026-08-06
+  stage_notes: >
+    run_staging discovered every modelled defect by profiling alone: 888 test/internal orders
+    removed (tripping both test_internal_rows and implausible_amount), 3,282 duplicate display
+    ids flagged and retained, 4,019 Shopify and 14,886 Klaviyo emails normalised, 506 Gorgias
+    tag values collapsed for casing drift, 2,342 dunning retries flagged, 573 charges orphaned
+    onto removed test orders, and 4,329 support tickets flagged as unlinkable to commerce.
+    Cross-system coverage reports 48.7% of in-window orders absent from GA4 — the headline
+    finding, reached without any knowledge of how the data was produced.

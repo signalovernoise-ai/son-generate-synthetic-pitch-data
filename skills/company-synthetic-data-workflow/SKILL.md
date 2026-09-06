@@ -47,6 +47,8 @@ Browse for current information on:
    - press releases, investor updates, company filings, and credible reporting that mention revenue, growth, customer trends, or category expansion
    - source systems, vendors, or job-posting evidence of tooling
    - notable retention or acquisition dynamics in the category
+   - whether the brand's peak trading windows run on a non-Gregorian calendar (Ramadan/Eid, Lunar New Year, Diwali) — read `references/seasonality-calendars.md` when they do, because those peaks migrate across Gregorian months and break year-on-year month comparison
+   - for UK private companies, Companies House filings — where accounts are filed without a profit and loss account, the corporation-tax creditor, the movement in retained earnings and closing stock still bound revenue (see `references/setup-checklist.md`)
 As a standard step for every client, run a website technology-profiler check (e.g. BuiltWith, Wappalyzer, or the brand's on-site JavaScript/script tags and DNS/email headers) to detect the actual martech, analytics, subscription, and CRM/ESP stack in use. Treat this as the default first pass for source-system evidence — especially for the campaign/email-SMS system (Klaviyo vs Bloomreach vs Customer.io, etc.), where category norms are a weak signal and the live site usually reveals the truth. Record what the profiler detects (and what it does not) in the setup artifact, and reconcile it explicitly against any call-note or user-stated tooling.
 Use exact dates when referencing current facts.
 Use the exact current product names and prices visible on the company site when building the products table.
@@ -71,6 +73,7 @@ Before generating any data, define the expected shape of the business over time,
    - any expected inflection points such as launches, promotions, migrations, or category expansion, with explicit metric impact
 Do not keep these assumptions vague. Quantify them in a way the user can review and challenge before generation starts.
 Record these as explicit pre-generation assumptions in the setup artifact and include them in the approval plan.
+Check the proposed mix against the order-mix identity in `references/metric-definitions.md` before writing it into the setup artifact. New/repeat share, subscription share and the retention curve are three views of one order population; a set quoted from intuition usually cannot be generated, and the mismatch only surfaces after generation as a flattened retention curve.
 Read `references/metric-definitions.md` and follow it for how every metric is computed. In particular: AOV and revenue are net of discount, VAT-inclusive, and shipping-excluded; calibrate order size against the net price the customer pays, never the gross list/`compare_at_price` value. Monthly order-volume targets are promo-inclusive — promotions lean into key trading periods, so they are already baked into the monthly path; model promo effects on AOV and mix, not as an additional volume lift on top of the monthly target. If a company instead wants pre-promo baselines, state that override in the setup artifact.
 
 5. Estimate dataset volume before generation.
@@ -84,6 +87,8 @@ Estimate the likely row counts for the raw source outputs, especially:
 If the projected build is likely to exceed about 5 million total raw rows or otherwise become unwieldy for generation, validation, and review:
    - first propose reducing the historic window from 18 months to 12 months
    - then, if still too large, propose scaling down operational row counts while preserving the approved commercial metrics, growth rates, retention patterns, seasonality, promo effects, and issue prevalence
+Reverse that order only when the history itself carries the story — a long replenishment or subscription cadence needs the full 18 months to show a cohort curve at all, and a window cut that still leaves the build over threshold buys nothing. When you reverse it, say so explicitly in the approval plan with the reasoning, and let the user decide.
+Estimate order-item rows from the actual basket model, not a generic lines-per-order multiplier: a "pack" SKU is one line, so a multi-unit brand can still average close to one line per order.
 Apply these reductions primarily to high-volume fact and event tables such as orders, order items, lifecycle events, support events, analytics events, and attribution journeys. Keep low-row-count dimensions such as products as complete as possible.
 Do not silently shrink the dataset. Put the proposed reduction into the approval plan for user review.
 
@@ -91,8 +96,10 @@ Do not silently shrink the dataset. Put the proposed reduction into the approval
 Only include source systems that are backed by one of:
    - public evidence such as vendor directories, job postings, engineering writeups, or exposed trackers
    - a website technology-profiler result (BuiltWith / Wappalyzer / on-site script and header inspection) — run this as standard for every client
+   - a **public ad-library result** for paid-media systems (Meta Ad Library, TikTok Commercial Content Library), searchable by advertiser and region
    - direct user confirmation
    - notes from discovery or sales calls provided by the user
+**A missing pixel is not evidence of absence for paid media.** On Shopify, the Meta, TikTok and Google pixels run inside the server-side web-pixels sandbox, so `connect.facebook.net` / `analytics.tiktok.com` will not appear in the rendered page source even when the channel is the brand's largest. `webPixelsConfigList` lists installed app pixels but does not name them. Always check the ad libraries before excluding a paid-social channel — excluding a live channel understates acquisition far more than including a dormant one.
 Record the evidence for each system in the setup artifact.
 When a profiler result and a call note or user belief disagree on a system (e.g. the site shows Klaviyo but notes say Customer.io), surface the conflict in the plan and let the user resolve it rather than silently picking one.
 If a system is plausible but unconfirmed, leave it out of generation and list it as an open question instead.
@@ -214,6 +221,7 @@ Read `references/retrospective.md` and reconcile what actually happened against 
 - `references/setup-checklist.md`: step-by-step setup and research checklist
 - `references/metric-definitions.md`: how every metric is computed (AOV/revenue conventions, promo-inclusive volume, scaling)
 - `references/channel-mix-benchmarks.md`: realistic D2C channel mix, unattributed baseline, and attribution-coverage modelling
+- `references/seasonality-calendars.md`: non-Gregorian trading peaks (Ramadan/Eid, Lunar New Year, Diwali), why they migrate, and the mix and retention effects they cause
 - `references/data-issues-menu.md`: menu of common real-world data issues
 - `references/generator-contract.md`: authoring contract for a company `generate_raw.py` — structure, conventions, shared helpers, AOV calibration, cross-system consistency rules
 - `references/stage-cleaning.md`: how raw extracts are cleaned/standardized into stage tables, the detector battery, and how to extend it

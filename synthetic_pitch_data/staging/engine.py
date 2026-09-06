@@ -16,6 +16,7 @@ from .cleaning_common import (
     flag_duplicate_display_id,
     format_utc,
     implausible_amount,
+    line_economics,
     missing_required,
     near_duplicates,
     non_final_status,
@@ -64,6 +65,9 @@ def run_dataset(
     drop |= duplicate_key(df, spec.key, report)
 
     clean = df[~drop].copy()
+
+    # --- derive/flag on the surviving rows ---
+    clean = line_economics(clean, spec, report)
 
     for hook in spec.post_hooks:
         clean = hook(clean, report)

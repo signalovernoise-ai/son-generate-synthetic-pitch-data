@@ -93,6 +93,16 @@ row shapes, and `write_outputs`.
   renewals (server-side order tracking) but must **not** credit auto-renewals as click-driven
   conversions. Subscription *signups* (the customer's first order) are real web checkouts and
   keep their acquisition channel.
+- **Recurring charges fire on their scheduled anniversary**, not at a random point inside the
+  target month. Subscription platforms bill a fixed number of days after the previous charge,
+  so inter-order gaps cluster tightly around 30 / 91 days. Scattering renewals uniformly across
+  the calendar month keeps the monthly counts correct but widens the gaps enough to smear the
+  cohort-retention sawtooth once retention is bucketed by elapsed days. Anchor each renewal to
+  the previous charge (+ a few days of jitter), then clamp into the target month.
+- **Renewals that exceed a month's capacity are skipped or delayed, never deleted** — that is
+  what a subscription portal actually does. But chronic over-demand means skipping *every*
+  month, which smears the cadence: size survival so demand roughly matches capacity (see the
+  order-mix identity in `metric-definitions.md`).
 - **Channel attribution** is realistically non-uniform — read `channel-mix-benchmarks.md`;
   don't double-count the unattributed baseline.
 - **Data issues are the real defect, not a label** (e.g. partial coverage = genuinely missing

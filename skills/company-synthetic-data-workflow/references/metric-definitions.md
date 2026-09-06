@@ -59,6 +59,73 @@ If a future company instead wants monthly targets to be *pre-promo baselines* th
 above, state that explicitly in the setup yaml `execution_plan` and override this convention
 there.
 
+## The order-mix identity (check this before generating)
+
+New/repeat share, subscription share and the retention curve are **not independent** — they
+are three views of the same order population. Quoting them from intuition produces a set that
+cannot be generated. Before writing any targets into the setup yaml, check they solve:
+
+```
+1 = new_share × (1 + take_rate × renewals_per_subscriber) + adhoc_repeat_share
+subscription_order_share = new_share × take_rate × (renewals_per_subscriber + 1)
+repeat_order_share       = 1 − new_share
+retention(first renewal) ≈ take_rate × first-renewal survival + adhoc floor
+```
+
+where `take_rate` is the share of first orders that start a subscription and
+`renewals_per_subscriber` is the sum of cumulative survival across renewal cycles.
+
+If the identity does not balance, renewal *demand* will exceed the renewal *capacity* the
+monthly order targets leave free, the generator will skip renewals every month to hit its
+counts, and the retention curve will come out flatter and smeared versus the documented
+checkpoints. Fix the assumptions, not the generator.
+
+## Estimating the first-renewal checkpoint (discount it by the interval mix)
+
+A recurring pre-generation miss: estimating `m1` as `take_rate × first-renewal survival` and
+then finding the realized curve roughly half that. The error is forgetting that **a
+subscriber on a 3- or 6-month interval cannot renew at m1**. Only the 1-month cohort can.
+
+```
+retention(m1) ≈ take_rate × share_on_1_month_interval × first-renewal survival + adhoc floor
+retention(mN) ≈ take_rate × share_on_N_month_interval × survival to that cycle + adhoc floor
+```
+
+So a catalog sold as 1 / 3 / 6-month supplies produces a **cadence-shaped** curve with peaks
+at m1, m3 and m6, not a smooth decay — and `m3` can legitimately read **above** `m1` when the
+1-month cohort decays fast while the 3-month cohort arrives intact. Estimate each checkpoint
+against the interval mix before writing it into the setup artifact, and expect to replace all
+of them with realized values after generation.
+
+## Check the order-mix identity against the generator's parameters, not in the abstract
+
+Solving the identity on paper is not enough. The numbers that have to balance are the ones
+the generator will actually use — `take_rate`, per-cycle `RENEWAL_SURVIVAL`,
+`adhoc_repeat_share`, `MIN_NEW_SHARE` and the renewal-capacity cap. Before generating, compute
+the implied shares from those constants and compare them to the documented mix:
+
+```
+renewal_order_share ≈ new_share × take_rate × renewals_per_subscriber
+                      where renewals_per_subscriber = Σ cumulative survival across cycles
+repeat_order_share  ≈ renewal_order_share + adhoc_repeat_share
+```
+
+If the implied share and the documented target disagree, fix the constants *or* the target
+before generating. Discovering it afterwards costs a full regeneration, and right-censoring at
+the window end will additionally hold the final half-year below its target no matter what the
+constants say — expect that and do not tune it away.
+
+## Retention: two definitions, do not mix them
+
+- **Calendar-month offset** — cohort month vs order month. What most brands mean by "month 1".
+- **Elapsed 30-day buckets** from the exact first-order timestamp. What
+  `monthly_cohort_retention` computes, and what most warehouse implementations do.
+
+For a subscription brand on a fixed cadence the two differ materially: a renewal ~30 days
+after the first order lands in bucket 0 or 1 depending on a few days of jitter, and bucket 0
+is discarded, so the elapsed-days curve reads systematically lower at every cadence peak.
+State which definition a documented checkpoint uses, and never put both in one chart.
+
 ## Scaling
 
 When operational row counts are scaled (`volume_plan.reduction_actions.row_volume_scaling_factor`),

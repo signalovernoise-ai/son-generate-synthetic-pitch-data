@@ -28,6 +28,9 @@ Browse the web for current signals and capture the source links:
 - Job descriptions mentioning systems or data tools
 - App-store, partner, or vendor directory evidence
 - Website technology-profiler scan (BuiltWith / Wappalyzer / on-site script tags, DNS and email headers) — run this as a standard step for every client to detect the real martech, analytics, subscription, and CRM/ESP stack, particularly the email/SMS campaign system
+- Public ad-library scan for every paid-media platform — Meta Ad Library and the TikTok Commercial Content Library, both searchable by advertiser and region. Run this as a standard step: on Shopify the ad pixels sit in the server-side web-pixels sandbox and are invisible in page source, so the profiler alone produces false negatives on the brand's largest acquisition channel. Record the result count, the advertiser page name and the date checked
+- Non-Gregorian trading calendar check (Ramadan/Eid, Lunar New Year, Diwali) — see `seasonality-calendars.md`. Product names referencing an observance are direct evidence
+- Companies House (UK) or equivalent filings. Small companies routinely file accounts **without a profit and loss account**, so turnover is not disclosed. It can still be bounded from the balance sheet: the corporation-tax creditor implies taxable profit at the prevailing rate, the movement in retained earnings implies post-tax profit, and closing stock against a category-typical COGS ratio and stock-turn implies revenue independently. Triangulate at least two routes, take the overlap, and label the result an estimate
 - Category seasonality and promotional windows
 - Retail presence versus pure D2C
 
